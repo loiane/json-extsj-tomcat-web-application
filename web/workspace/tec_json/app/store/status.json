@@ -1,0 +1,40 @@
+{
+    "status": [
+        {
+            "name": "java.version",
+            "value": "1.7.0_51"
+        },
+        {
+            "name": "server.info",
+            "value": "Apache Tomcat/7.0.52"
+        },
+        {
+            "name": "servlet.version",
+            "value": "3.0"
+        },
+        {
+            "name": "database.server",
+            "value": "MySQL"
+        },
+        {
+            "name": "database.version",
+            "value": "5.6.11"
+        },
+        {
+            "name": "jdbc.driver",
+            "value": "MySQL Connector Java"
+        },
+        {
+            "name": "jdbc.driver.version",
+            "value": "mysql-connector-java-5.1.29 ( Revision: alexander.soklakov@oracle.com-20140120140810-s44574olh90i6i4l )"
+        },
+        {
+            "name": "spring.version",
+            "value": "4.0.2.RELEASE"
+        },
+        {
+            "name": "hibernate.version",
+            "value": "4.3.4.Final"
+        }
+    ]
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="common" default="common.fail" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <description>common tasks</description>
+
+	<target name="common.fail">
+        <fail message="Do not execute this file directly.  Use build.xml from project root" />
+    </target>
+
+    <!-- custom overrides -->
+    <property file="${user.home}/webapp.properties" />
+    <property file="${basedir}/build/default.properties" />
+
+    <property name="build.temp" value="${java.io.tmpdir}/webapp" />
+
+    <!-- ivy:configure file="${basedir}/build/settings/ivysettings.xml" / -->
+
+    <tstamp>
+        <format property="time.stamp" pattern="MM-dd-yyyy HH:mm:ss" />
+    </tstamp>
+
+    <target name="common.clean" unless="already.clean" description="clean up build artifacts">
+        <property name="already.clean" value="true" />
+        <delete dir="${build.temp}" />
+    </target>
+
+    <target name="common.init" unless="already.init" depends="common.clean" description="init build dependencies">
+        <property name="already.init" value="true" />
+        <mkdir dir="${build.temp}" />
+    </target>
+
+</project>

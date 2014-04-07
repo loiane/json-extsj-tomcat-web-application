@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ivy" default="ivy.fail" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+    <description>ivy tasks</description>
+
+    <target name="ivy.fail">
+        <fail message="Do not execute this file directly.  Use build.xml from project root" />
+    </target>
+
+    <property name="ivy.report.dir" value="${basedir}/report/ivy" />
+
+	<ivy:cachepath pathid="classpath.ivy" conf="compile"/>
+	<ivy:cachepath pathid="classpath.restrict.ivy" conf="restrict"/>
+
+	<!-- build compile classpath -->
+	<path id="classpath.compile">
+		<path refid="classpath.ivy"/>
+		<path refid="classpath.restrict.ivy"/>
+	</path>
+
+    <target name="ivy.resolve" depends="common.init" description="resolves dependencies into your ivy cache - only needs to be run upon initial checkout or when your ivy.xml changes">
+        <ivy:retrieve/>
+    </target>
+
+    <target name="ivy.clean" depends="common.init" description="clears the ivy cache">
+    	<ivy:cleancache />
+    </target>
+
+    <target name="ivy.report" depends="common.init" description="gens a report on dependencies">
+        <delete dir="${ivy.report.dir}" />
+        <mkdir dir="${ivy.report.dir}" />
+        <ivy:retrieve/>
+   		<ivy:report todir="${ivy.report.dir}" />
+    </target>
+    <target name="ivy.runtime">
+    	<ivy:cachepath pathid="runtime.ivy" conf="runtime"/>
+    </target>
+</project>

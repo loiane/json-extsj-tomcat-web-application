@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="doc" default="doc.fail">
+
+	<description>doc tasks</description>
+
+	<target name="doc.fail">
+		<fail message="Do not execute this file directly.  Use build.xml from project root" />
+	</target>
+
+	<property name="doc.root" value="${build.temp}/doc" />
+	<property name="javadoc.root" value="${doc.root}/api" />
+
+	<!-- Generates the javadoc -->
+	<target name="doc.javadoc" depends="common.init" unless="already.javadoc" description="generate application javadoc">
+		<property name="already.javadoc" value="true" />
+
+		<delete dir="${javadoc.root}" />
+		<mkdir dir="${javadoc.root}" />
+
+		<javadoc destdir="${javadoc.root}"
+			access="public"
+			version="true"
+			author="true"
+			use="true"
+			source="1.7"
+			charset="UTF-8"
+			Overview="${basedir}/doc/javadoc/overview.html"
+			windowtitle="tec json extjs tomcat webapp ${version}"
+			doctitle="tec json extjs tomcat webapp example ${version}"
+			bottom="&lt;a target='top' href='http://www.apache.org/licenses/LICENSE-2.0' &gt;Licensed under the Apache License, Version 2.0&lt;/a&gt;">
+
+			<classpath>
+				<path refid="classpath.compile" />
+			</classpath>
+
+			<fileset dir="${basedir}/java">
+				<include name="**/*.java" />
+				<exclude name="**/Test.java" />
+			</fileset>
+
+			<!-- core java api -->
+			<link href="http://docs.oracle.com/javase/7/docs/api/" />
+			<link href="http://docs.oracle.com/javaee/7/api/" />
+
+			<!-- apache commons -->
+			<link href="https://commons.apache.org/proper/commons-lang/javadocs/api-2.6/" />
+			<link href="http://commons.apache.org/proper/commons-logging/apidocs/" />
+
+			<!-- json-lib -->
+			<link href="http://json-lib.sourceforge.net/apidocs/jdk15/" />
+
+			<!-- spring framework -->
+			<link href="http://docs.spring.io/spring/docs/current/javadoc-api/" />
+
+			<!-- hibernate -->
+			<link href="https://docs.jboss.org/hibernate/orm/4.1/javadocs/" />
+
+		</javadoc>
+	</target>
+
+	<!-- Zips up the javadoc so you can ship it easily -->
+	<target name="doc.javadoc.zip" unless="already.javadoc.zip" depends="doc.javadoc"  description="zip javadoc javadoc">
+		<property name="already.javadoc.zip" value="true" />
+
+		<zip destfile="${build.temp/tec-json-api.zip" compress="true">
+			<fileset dir="${doc.root}/api" />
+		</zip>
+	</target>
+
+</project>

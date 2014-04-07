@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="dist" default="dist.fail"
+	xmlns:cs="antlib:com.puppycrawl.tools.checkstyle"
+	xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<description>distribution tasks</description>
+
+	<target name="dist.fail">
+		<fail message="Do not execute this file directly.  Use build.xml from project root" />
+	</target>
+
+	<property name="jar.file.name" value="tec-json-webapp.jar" />
+	<property name="jar.file" value="${build.temp}/${jar.file.name}" />
+	<property name="war.file.name" value="tec-json-webapp.war" />
+	<property name="war.file" value="${build.temp}/${war.file.name}" />
+	<!-- TODO: variablize he build type -->
+
+	<target name="dist.checkstyle" depends="common.init" unless="already.checkstyle" description="runs checkstyle rules over java code">
+		<property name="already.checkstyle" value="true" />
+		<cs:checkstyle config="${basedir}/build/checkstyle/checkstyle.xml">
+
+			<classpath>
+				<path refid="classpath.compile" />
+			</classpath>
+
+			<fileset dir="${basedir}/java">
+				<include name="**/*.java" />
+				<exclude name="**/*Test.java" />
+				<exclude name="**/*TestCase.java" />
+				<exclude name="**/test/**" />
+				<exclude name="**/data/**" />
+			</fileset>
+		</cs:checkstyle>
+	</target>
+
+	<target name="dist.compile" depends="dist.checkstyle" unless="already.compile" description="Compile eEdtions classes">
+		<property name="already.compile" value="true" />
+		<mkdir dir="${build.temp}/classes" />
+
+		<javac srcdir="${basedir}/java"
+			destdir="${build.temp}/classes"
+			classpathref="classpath.compile"
+			deprecation="${show.deprecation}"
+			debug="on"
+			source="1.7" target="1.7"
+			includeAntRuntime="off">
+			<exclude name="com/cds/eeditions/orm/data/gen/**" />
+		</javac>
+	</target>
+
+	<target name="dist.jar" depends="dist.compile" unless="already.jar" description="build eEdtions jar">
+		<property name="already.jar" value="true" />
+		<jar destfile="${jar.file}">
+			<manifest>
+				<attribute name="Specification-Title" value="extjs json webapp skeleton" />
+				<attribute name="Specification-Vendor" value="TEC enterprises" />
+				<attribute name="Specification-Version" value="${version} ${build.number} ${time.stamp}" />
+				<attribute name="Implementation-Title" value="extjs json webapp skeleton" />
+				<attribute name="Implementation-Vendor" value="TEC enterprises" />
+				<attribute name="Implementation-Version" value="${version} ${build.number} ${time.stamp}" />
+			</manifest>
+			<fileset dir="${build.temp}/classes" />
+		</jar>
+	</target>
+
+	<target name="dist.war" depends="hibernate.props,dist.jar,extjs.build.dev" unless="already.war" description="build eEdtions jar">
+		<property name="already.war" value="true" />
+		<ivy:cachepath pathid="runtime.ivy" conf="runtime"/>
+
+		<war destfile="${war.file}" webxml="${basedir}/conf/WEB-INF/web.xml">
+
+			<fileset dir="${extjs.build.root}">
+				<exclude name="WEB-INF/**/*" />
+				<exclude name="META-INF/**/*" />
+			</fileset>
+
+			<fileset dir="${basedir}/web/security">
+				<include name="*.html" />
+			</fileset>
+
+			<lib dir="${build.temp}">
+				<include name="${jar.file.name}" />
+			</lib>
+
+			<!-- see http://www.beilers.com/2010/06/ivy-dependency-management-lessons-learned-and-ant-1-8-mapped-resources/ -->
+			<mappedresources>
+				<restrict>
+					<path refid="runtime.ivy"/>
+					<type type="file"/>
+				</restrict>
+				<chainedmapper>
+					<flattenmapper/>
+					<firstmatchmapper>
+						<regexpmapper handledirsep="true" from=".*servlet.*" to="META-INF/servlet-api\.build"/>
+						<globmapper from="*" to="WEB-INF/lib/*"/>
+					</firstmatchmapper>
+				</chainedmapper>
+			</mappedresources>
+
+			<classes dir="${basedir}/conf/WEB-INF/classes" />
+
+			<webinf dir="${basedir}/conf/WEB-INF">
+				<exclude name="web.xml" />
+				<exclude name="classes/**/*" />
+			</webinf>
+
+			<webinf dir="${build.temp}/WEB-INF">
+				<include name="**/hibernate.properties" />
+			</webinf>
+
+			<metainf dir="${basedir}/conf/META-INF" />
+		</war>
+	</target>
+
+	<target name="dist.delete.log" depends="common.init" unless="already.delete" description="delete log files">
+		<property name="already.delete" value="true" />
+		<delete verbose="${delete.verbose}">
+			<fileset dir="${tomcat.home}/logs">
+				<include name="**/*.log" />
+				<include name="**/*.txt" />
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="dist.jar.deploy" depends="dist.jar, dist.delete.log" description="deploy ${jar.file} to webapp">
+		<copy todir="${tomcat.home}/webapps/tec-json-webapp/WEB-INF/lib" file="${jar.file}" preservelastmodified="true" verbose="copy.verbose" />
+	</target>
+
+	<target name="dist.war.deploy" depends="dist.war, dist.delete.log" description="deploy war to tomcat">
+		<delete dir="${tomcat.home}/webapps/tec-json-webapp"/>
+		<delete file="${tomcat.home}/webapps/${war.file.name}"/>
+		<delete dir="${tomcat.home}/webapps/tec-json-webapp" />
+		<copy todir="${tomcat.home}/webapps" file="${war.file}" preservelastmodified="true" verbose="${copy.verbose}" />
+	</target>
+
+	<target name="dist.update.wbapp" depends="common.init, dist.delete.log" description="deploy supporting files to tomcat">
+	</target>
+
+</project>

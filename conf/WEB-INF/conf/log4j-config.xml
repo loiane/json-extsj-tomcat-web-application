@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+
+  <!-- ================================= -->
+  <!-- Preserve messages in a local file -->
+  <!-- ================================= -->
+  <!-- A time/date based rolling appender -->
+  <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/webapp.log"/>
+    <param name="Append" value="false"/>
+    <param name="Threshold" value="DEBUG"/>
+
+    <!-- Rollover at midnight each day -->
+    <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+
+    <layout class="org.apache.log4j.PatternLayout">
+      <!-- The default pattern: Date Priority [Category] Message\n -->
+      <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+    </layout>
+  </appender>
+
+  <category name="org"><priority value="WARN" /></category>
+  <category name="com"><priority value="WARN" /></category>
+  <category name="java"><priority value="WARN" /></category>
+
+  <category name="org.springframework"><priority value="WARN" /></category>
+  <category name="org.hibernate"><priority value="WARN" /></category>
+
+<!--
+  <category name="org.springframework.orm.hibernate4.support.OpenSessionInViewFilter"><priority value="DEBUG" /></category>
+  <category name="org.springframework.orm.hibernate4.LocalSessionFactoryBean"><priority value="DEBUG" /></category>
+-->
+  <!-- ======================= -->
+  <!-- Setup the Root category -->
+  <!-- ======================= -->
+  <root>
+    <level value="WARN"/>
+    <appender-ref ref="FILE"/>
+  </root>
+
+</log4j:configuration>

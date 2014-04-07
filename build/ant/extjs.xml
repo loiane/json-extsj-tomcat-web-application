@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="extjs" default="extjs.fail">
+
+    <description>extjs tasks</description>
+
+	<target name="extjs.fail">
+        <fail message="Do not execute this file directly.  Use build.xml from project root" />
+    </target>
+
+	<!-- this is only to generate the base workspace. -->
+	<!-- http://docs.sencha.com/cmd/4.0.0/#!/guide/command_workspace -->
+	<!--
+    <target name="extjs.gen.workspace" unless="already.workspace" description="generate the extjs workspace">
+        <property name="already.workspace" value="true" />
+        <delete dir="${basedir}\web" />
+        <mkdir dir="${basedir}\web" />
+        <exec spawn="N" dir="${basedir}\web" executable="${sencha.cmd.home}/sencha.exe">
+            <arg value="-sdk" />
+            <arg value="${extjs.home}" />
+        	<arg value="generate" />
+            <arg value="workspace" />
+            <arg value="workspace" />
+        </exec>
+    </target>
+	-->
+	<!-- this is only to generate the skeleton application. -->
+	<!-- http://docs.sencha.com/cmd/4.0.0/#!/guide/command_app_ext42 -->
+	<!--
+    <target name="extjs.gen.app" unless="already.app" depends="extjs.gen.workspace" description="generate the extjs skeleton app">
+        <property name="already.app" value="true" />
+        <exec spawn="N" dir="${basedir}\web\workspace" executable="${sencha.cmd.home}/sencha.exe">
+            <arg value="-sdk" />
+            <arg value="ext" />
+        	<arg value="generate" />
+            <arg value="app" />
+            <arg value="tec_json" />
+            <arg value="tec_json" />
+        </exec>
+    </target>
+	-->
+
+    <target name="extjs.build.dev" description="build the extjs application in test mode">
+		<property name="extjs.build.root" value="${java.io.tmpdir}/webapp/extjs/target/testing/tec_json" />
+        <antcall target="extjs.build">
+          <param name="target" value="testing"/>
+        </antcall>
+    </target>
+
+    <target name="extjs.build.prod" description="build the extjs production application">
+		<property name="extjs.build.root" value="${java.io.tmpdir}/webapp/extjs/target/production/tec_json" />
+        <antcall target="extjs.build">
+          <param name="target" value="production"/>
+        </antcall>
+    </target>
+
+	<!-- See http://docs.sencha.com/cmd/4.0.0/#!/guide/command_app_ext42 -->
+	<!-- the build root is controlled via /webapp/web/workspace/tec_json/.sencha/app/build.properties -->
+	<target name="extjs.build" unless="already.build">
+        <property name="already.build" value="true" />
+    	<delete dir="${extjs.build.root}" />
+        <exec spawn="N" dir="${basedir}\web\workspace\tec_json" executable="${sencha.cmd.home}/sencha.exe">
+        	<arg value="app" />
+            <arg value="build" />
+            <arg value="${target}" />
+        </exec>
+    </target>
+</project>
