@@ -27,7 +27,7 @@
 	<!-- this is only to generate the skeleton application. -->
 	<!-- http://docs.sencha.com/cmd/4.0.0/#!/guide/command_app_ext42 -->
 	<!--
-    <target name="extjs.gen.app" unless="already.app" depends="extjs.gen.workspace" description="generate the extjs skeleton app">
+    <target name="extjs.gen.app" unless="already.app" description="generate the extjs skeleton app">
         <property name="already.app" value="true" />
         <exec spawn="N" dir="${basedir}\web\workspace" executable="${sencha.cmd.home}/sencha.exe">
             <arg value="-sdk" />
@@ -39,7 +39,6 @@
         </exec>
     </target>
 	-->
-
     <target name="extjs.build.dev" description="build the extjs application in test mode">
 		<property name="extjs.build.root" value="${java.io.tmpdir}/webapp/extjs/target/testing/tec_json" />
         <antcall target="extjs.build">

@@ -17,23 +17,46 @@ package org.tec.webapp.json;
 
 import java.util.HashMap;
 
-import net.sf.json.JSONObject;
-
 /**
  * helper class for serializing map data
  *
- * @param <K> the map key type
+ * @param <K> the map key name (Type String)
  * @param <V> the map value type
  */
-public class SerializableMap<K, V> extends HashMap<K, V> implements JSONSerializable
+public class SerializableMap<K, V extends JSONSerializable> extends HashMap<String, V> implements JSONSerializable
 {
 
   /** serial guid */
   private static final long serialVersionUID = 1L;
 
+  /**
+   * {@inheritDoc}
+   */
   @Override()
   public String toJSON()
   {
-    return JSONObject.fromObject(this).toString();
+    if (size() == 0)
+    {
+      return "{}";
+    }
+    else
+    {
+      StringBuffer buff = new StringBuffer();
+
+      buff.append("{");
+
+      for (String key : this.keySet())
+      {
+        if (buff.length() > 2) //appended more than one list object
+        {
+          buff.append(",");
+        }
+        buff.append("\"").append(key).append("\" : ").append(this.get(key).toJSON());
+      }
+
+      buff.append("}");
+
+      return buff.toString();
+    }
   }
 }

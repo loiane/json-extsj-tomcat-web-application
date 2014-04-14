@@ -27,19 +27,17 @@ import org.springframework.web.servlet.ModelAndView;
 import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.json.SerializableMap;
 import org.tec.webapp.orm.entity.User;
-import org.tec.webapp.orm.service.SystemSvc;
 import org.tec.webapp.orm.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
 import org.tec.webapp.web.WebException;
 import org.tec.webapp.web.model.JSONModelAndView;
-import org.tec.webapp.web.model.status.StatusBean;
 
 /**
- * Job log controller
+ * user controller for creating editing and deleting users
  */
 @Controller()
-@RequestMapping("/status")
-public class StatusController
+@RequestMapping("/user_admin")
+public class UserAdminController
 {
   /** the logger */
   protected Log mLogger = LogFactory.getLog(this.getClass());
@@ -48,44 +46,35 @@ public class StatusController
   @Autowired()
   protected UserSvc mUserSvc;
 
-  /** the system service */
-  @Autowired()
-  protected SystemSvc mSystemSvc;
-
   /**
-   * get current system status
+   * get list of users excluding the current
    *
    * @param session the http session
    *
    * @return current system status
    */
   @RequestMapping(method = RequestMethod.GET)
-  public ModelAndView getStatus(HttpSession session)
+  public ModelAndView getUsers(HttpSession session)
   {
     JSONModelAndView jmv = new JSONModelAndView();
+
     try
     {
       if (mLogger.isDebugEnabled())
       {
-        mLogger.debug("status");
+        mLogger.debug("get users");
       }
-      SerializableMap<String, SerializableList<StatusBean>> smap = new SerializableMap<String, SerializableList<StatusBean>>();
-
-      SerializableList<StatusBean> slist = mSystemSvc.getStatus();
+      SerializableMap<String, SerializableList<User>> smap = new SerializableMap<String, SerializableList<User>>();
 
       User currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
 
-      slist.add(new StatusBean("current.user", currentUser.getUserName()));
-
-      smap.put("status", slist);
-
-      //mUserSvc.init();
+      smap.put("users", mUserSvc.getOtherUsers(currentUser.getUserName()));
 
       jmv.setData(smap);
     }
     catch (Throwable e)
     {
-      jmv.setError(new WebException("failed to get system status", e));
+      jmv.setError(new WebException("failed to get users", e));
     }
     return jmv;
   }

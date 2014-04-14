@@ -15,12 +15,14 @@
  ******************************************************************************/
 package org.tec.webapp.web.model.status;
 
-import java.io.Serializable;
+import net.sf.json.JSONObject;
+
+import org.tec.webapp.json.JSONSerializable;
 
 /**
  * status value bean
  */
-public class StatusBean implements Serializable
+public class StatusBean implements JSONSerializable
 {
   /** serial guid */
   private static final long serialVersionUID = 1L;
@@ -76,5 +78,14 @@ public class StatusBean implements Serializable
   public void setValue(String value)
   {
     this.mValue = value;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override()
+  public String toJSON()
+  {
+    return JSONObject.fromObject(this).toString();
   }
 }

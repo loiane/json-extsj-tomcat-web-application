@@ -5,7 +5,6 @@ Ext.define('tec_json.store.Status', {
     proxy: {
         type: 'ajax',
         url: 'actions/status',
-//        url: '/app/store/status.json', // for local testing
         reader: {
             type: 'json',
             root: 'status',

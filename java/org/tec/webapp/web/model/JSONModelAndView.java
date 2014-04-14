@@ -18,6 +18,8 @@
  */
 package org.tec.webapp.web.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.tec.webapp.json.JSONSerializable;
 import org.tec.webapp.web.WebException;
@@ -36,6 +38,9 @@ public class JSONModelAndView extends ModelAndView
 
   /**  the standard view */
   protected static final String VIEW = "json.view";
+
+  /** the logger */
+  protected Log mLogger = LogFactory.getLog(this.getClass());
 
   /**
    * default ctor
@@ -64,11 +69,12 @@ public class JSONModelAndView extends ModelAndView
   }
 
   /**
-   * Set error information
+   * Set error information and log it.
    * @param webException the web error
    */
   public void setError(WebException webException)
   {
+    mLogger.error(webException.getMessage(), webException.getCause());
     addObject(ERROR_KEY, webException);
   }
 }

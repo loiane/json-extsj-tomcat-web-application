@@ -12,8 +12,8 @@
 	<http auto-config="true">
 		<!-- ** pattern means all sub dirs -->
 		<intercept-url pattern="/login.html" access="ROLE_ANONYMOUS" />
-		<intercept-url pattern="/**" access="ROLE_ANONYMOUS" />
-		<!-- intercept-url pattern="/**" access="ROLE_USER" / -->
+		<intercept-url pattern="/**" access="ROLE_USER" />
+		<!-- intercept-url pattern="/**" access="ROLE_ANONYMOUS" / -->
 		<!-- TODO: guest and admin patterns -->
 
 		<form-login
@@ -31,10 +31,10 @@
       <password-encoder hash='md5'/>
       <jdbc-user-service
         data-source-ref='dataSource'
-	  	users-by-username-query='select username,password,enabled from users where username=?'
-	    authorities-by-username-query='select u.username, ur.authority from users u
-inner join user_roles ur on u.user_id = ur.user_id
-where u.username=?'/>
+	  	users-by-username-query='select user_name,password,enabled from users where user_name=?'
+	    authorities-by-username-query='select u.user_name, ur.role as authority from users u
+inner join user_role ur on u.user_id = ur.user_id
+where u.user_name=?'/>
 	  </authentication-provider>
 	</authentication-manager>
 

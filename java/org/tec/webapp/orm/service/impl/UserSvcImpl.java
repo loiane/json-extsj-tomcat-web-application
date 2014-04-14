@@ -15,12 +15,7 @@
  ******************************************************************************/
 package org.tec.webapp.orm.service.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -28,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.orm.dao.UserDao;
 import org.tec.webapp.orm.entity.User;
 import org.tec.webapp.orm.service.UserSvc;
@@ -94,53 +90,20 @@ public class UserSvcImpl implements UserSvc
   @Override()
   public void init()
   {
-    BufferedReader in = null;
-    try
+    Collection<User> users = User.getDefaultUsers();
+
+    for (User u: users)
     {
-      in = new BufferedReader(
-          new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("org/tec/webapp/users.json"),
-          StandardCharsets.UTF_8));
+      User user = mUserDao.getUser(u.getUserName());
 
-      StringBuffer buff = new StringBuffer();
-
-      for (String str = in.readLine(); str != null; str = in.readLine())
+      if (user == null)
       {
-        buff.append(str);
-      }
+        mUserDao.insert(u);
 
-      Collection<User> users = User.jsonArrayToUsers(buff.toString());
+        user = mUserDao.getUser(u.getUserName());
+        u.setUserId(user.getUserId());
 
-      for (User u: users)
-      {
-        User user = mUserDao.getUser(u.getUserName());
-
-        if (user == null)
-        {
-          mUserDao.insert(u);
-
-          user = mUserDao.getUser(u.getUserName());
-          u.setUserId(user.getUserId());
-
-          mUserDao.updatePassword(u);
-        }
-      }
-    }
-    catch (Throwable t)
-    {
-      throw new RuntimeException("failed to init users", t);
-    }
-    finally
-    {
-      if (in != null)
-      {
-        try
-        {
-          in.close();
-        }
-        catch (IOException e)
-        {
-          mLogger.error("failed to close stream", e);
-        }
+        mUserDao.updatePassword(u);
       }
     }
   }
@@ -149,6 +112,7 @@ public class UserSvcImpl implements UserSvc
    * {@inheritDoc}
    */
   @Override()
+  @Transactional()
   public User getUser(String userName)
   {
     return mUserDao.getUser(userName);
@@ -158,8 +122,13 @@ public class UserSvcImpl implements UserSvc
    * {@inheritDoc}
    */
   @Override()
-  public List<User> getOtherUsers(String userName)
+  @Transactional()
+  public SerializableList<User> getOtherUsers(String userName)
   {
-    return mUserDao.getOtherUsers(userName);
+    SerializableList<User> userList = new SerializableList<User>();
+
+    userList.addAll(mUserDao.getOtherUsers(userName));
+
+    return userList;
   }
 }

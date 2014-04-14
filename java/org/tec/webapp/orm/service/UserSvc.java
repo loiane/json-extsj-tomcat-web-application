@@ -15,8 +15,7 @@
  ******************************************************************************/
 package org.tec.webapp.orm.service;
 
-import java.util.List;
-
+import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.orm.entity.User;
 
 /**
@@ -65,5 +64,5 @@ public interface UserSvc
    * @param userName the current user to exclude from the list
    * @return the list of other users
    */
-  List<User> getOtherUsers(String userName);
+  SerializableList<User> getOtherUsers(String userName);
 }

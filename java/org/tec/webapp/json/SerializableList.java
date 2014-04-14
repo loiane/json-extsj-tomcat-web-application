@@ -17,14 +17,12 @@ package org.tec.webapp.json;
 
 import java.util.ArrayList;
 
-import net.sf.json.JSONArray;
-
 /**
  * helper class for serializing list data
  *
  * @param <E> the list data type
  */
-public class SerializableList<E> extends ArrayList<E> implements JSONSerializable
+public class SerializableList<E extends JSONSerializable> extends ArrayList<E> implements JSONSerializable
 {
   /** serial guid */
   private static final long serialVersionUID = 1L;
@@ -32,8 +30,31 @@ public class SerializableList<E> extends ArrayList<E> implements JSONSerializabl
   /**
    * {@inheritDoc}
    */
+  @Override()
   public String toJSON()
   {
-    return JSONArray.fromObject(this).toString();
+    if (size() == 0)
+    {
+      return "[]";
+    }
+    else
+    {
+      StringBuffer buff = new StringBuffer();
+
+      buff.append("[");
+
+      for (JSONSerializable js : this)
+      {
+        if (buff.length() > 2) //appended more than one list object
+        {
+          buff.append(",");
+        }
+        buff.append(js.toJSON());
+      }
+
+      buff.append("]");
+
+      return buff.toString();
+    }
   }
 }

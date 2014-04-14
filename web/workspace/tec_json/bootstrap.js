@@ -830,11 +830,17 @@ Ext.ClassManager.addNameAlternateMappings({
   ],
   "tec_json.Application": [],
   "tec_json.controller.Main": [],
+  "tec_json.controller.Status": [],
+  "tec_json.controller.Users": [],
   "tec_json.model.NameValue": [],
+  "tec_json.model.User": [],
   "tec_json.store.Status": [],
+  "tec_json.store.Users": [],
   "tec_json.view.Main": [],
   "tec_json.view.StatusGrid": [],
-  "tec_json.view.Viewport": []
+  "tec_json.view.Viewport": [],
+  "tec_json.view.users.Form": [],
+  "tec_json.view.users.Grid": []
 });
 Ext.ClassManager.addNameAliasMappings({
   "Ext.AbstractComponent": [],
@@ -1824,15 +1830,25 @@ Ext.ClassManager.addNameAliasMappings({
   ],
   "tec_json.Application": [],
   "tec_json.controller.Main": [],
+  "tec_json.controller.Status": [],
+  "tec_json.controller.Users": [],
   "tec_json.model.NameValue": [],
+  "tec_json.model.User": [],
   "tec_json.store.Status": [],
+  "tec_json.store.Users": [],
   "tec_json.view.Main": [
     "widget.tec-main"
   ],
   "tec_json.view.StatusGrid": [
     "widget.tec-status-grid"
   ],
-  "tec_json.view.Viewport": []
+  "tec_json.view.Viewport": [],
+  "tec_json.view.users.Form": [
+    "widget.tec-users-form"
+  ],
+  "tec_json.view.users.Grid": [
+    "widget.tec-users-grid"
+  ]
 });
 Ext.setVersion("ext-theme-base", "4.2.1");
 Ext.setVersion("ext-theme-classic", "4.2.1");

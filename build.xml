@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="eeditions-webapp" basedir="." default="default"  xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<import file="${basedir}/build/ant/common.xml" />
+    <import file="${basedir}/build/ant/dist.xml" />
+    <import file="${basedir}/build/ant/doc.xml" />
+    <import file="${basedir}/build/ant/extjs.xml" />
+    <import file="${basedir}/build/ant/hibernate.xml" />
+    <import file="${basedir}/build/ant/ivy-ant.xml" />
+
+    <description>extjs json tomcat web application</description>
+
+    <target name="default" description="default task">
+        <echo>eEditions pentaho plugins. issue -p to see tasks</echo>
+    </target>
+
+</project>
