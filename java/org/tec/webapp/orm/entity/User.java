@@ -67,6 +67,12 @@ uniqueConstraints = {
     @UniqueConstraint(name = "enail_uc", columnNames = { "email" }) })
 public class User implements JSONSerializable
 {
+  /** the anonymous user name */
+  protected static final String ANON_USER_NAME = "anonymous";
+
+  /** the anonymous user */
+  public static final User ANON_USER = new User();
+
   /** the json config to filter out password when sending data to client */
   protected static final JsonConfig JSON_CONFIG = new JsonConfig();
 
@@ -75,6 +81,9 @@ public class User implements JSONSerializable
    */
   static
   {
+    ANON_USER.setUserName(ANON_USER_NAME);
+    ANON_USER.setUserId(-1);
+
     JSON_CONFIG.setRootClass(User.class);
     /** this is to filter the password and cyclic user refernce from user role */
     JSON_CONFIG.setJsonPropertyFilter(new PropertyFilter()
@@ -232,6 +241,15 @@ public class User implements JSONSerializable
   public void setUserRoles(List<UserRole> userRoles)
   {
     mUserRoles = userRoles;
+  }
+
+  /**
+   * whether this is an anonymous user
+   * @return true if user is anonymous
+   */
+  public boolean isAnonymous()
+  {
+    return mUserName.equals(ANON_USER_NAME);
   }
 
   /**

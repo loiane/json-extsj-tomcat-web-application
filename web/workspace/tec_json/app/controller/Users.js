@@ -4,6 +4,7 @@ Ext.define('tec_json.controller.Users', {
 	models : [ 'User' ],
 	views : [ 'users.Form' ],
 	init : function() {
+
 		this.control({
 			'UsersGrid' : {
 				selectionchange : this.gridSelectionChange,

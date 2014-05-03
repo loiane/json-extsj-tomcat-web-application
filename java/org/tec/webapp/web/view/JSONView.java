@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.view.AbstractView;
 import org.tec.webapp.json.JSONSerializable;
-import org.tec.webapp.web.WebException;
 import org.tec.webapp.web.model.JSONModelAndView;
 
 
@@ -38,7 +37,7 @@ public class JSONView extends AbstractView
   protected Log mLogger = LogFactory.getLog(this.getClass());
 
   /** the response content type */
-  protected static final String CONTENT_TYPE = "application/json; charset=UTF-8";
+  protected static final String JSON_CONTENT_TYPE = "application/json; charset=UTF-8";
 
   /**
    * {@inheritDoc}
@@ -52,7 +51,6 @@ public class JSONView extends AbstractView
 
       if (json != null)
       {
-        mLogger.error("error", ((WebException) json).getCause());
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       }
       else
@@ -65,10 +63,17 @@ public class JSONView extends AbstractView
         mLogger.debug("JSON Response\n" + json.toJSON());
       }
 
-      response.setContentType(CONTENT_TYPE);
-      PrintWriter pw = response.getWriter();
-      pw.write(json.toJSON());
-      pw.flush();
+      if (json != null)
+      {
+        response.setContentType(JSON_CONTENT_TYPE);
+        PrintWriter pw = response.getWriter();
+        pw.write(json.toJSON());
+        pw.flush();
+      }
+      else // null json for controllers that usurp the response or didn't intend to
+      {
+        mLogger.warn("null json object");
+      }
     }
     catch (Exception e)
     {

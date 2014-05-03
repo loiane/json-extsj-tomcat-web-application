@@ -9,24 +9,72 @@
 	<!-- see http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#web-app-security -->
 	<!-- see http://www.mkyong.com/spring-security/spring-security-form-login-example/ -->
 	<!-- see http://docs.spring.io/spring-security/site/docs/3.0.x/reference/anonymous.html -->
-	<http auto-config="true">
+	<!-- see http://javajeedevelopment.blogspot.com/2011/02/integrating-spring-security-3-with.html -->
+
+	<global-method-security pre-post-annotations="enabled"/>
+
+	<http entry-point-ref="authenticationEntryPoint" access-decision-manager-ref="accessDecisionManager">
 		<!-- ** pattern means all sub dirs -->
-		<intercept-url pattern="/login.html" access="ROLE_ANONYMOUS" />
-		<intercept-url pattern="/**" access="ROLE_USER" />
-		<!-- intercept-url pattern="/**" access="ROLE_ANONYMOUS" / -->
+
+	    <intercept-url pattern="/j_spring_security_logout" access="ROLE_ANONYMOUS"/>
+	    <intercept-url pattern="/j_spring_security_check" access="ROLE_ANONYMOUS" requires-channel="http"/>
+	    <intercept-url pattern="/index.html" access="ROLE_ANONYMOUS" requires-channel="http"/>
+	    <intercept-url pattern="/actions/**" access="ROLE_USER" requires-channel="http"/>
+
 		<!-- TODO: guest and admin patterns -->
 
-		<form-login
-			login-page='/login.html'
-			default-target-url="/index.html"
-			authentication-failure-url="/login.html" />
-        <!-- TODO: handle logout j_spring_security_logout -->
-		<logout logout-success-url="/login.html" />
+		<custom-filter position="FORM_LOGIN_FILTER" ref="authenticationFilter" />
+		<!-- with the above custom filter you cannot have the form-login sub element -->
+		<!-- http://forum.spring.io/forum/spring-projects/security/63731-struggling-with-custom-filters -->
+
+		<logout logout-url="/j_spring_security_logout" success-handler-ref="securityLogoutSuccessHandler" />
 	</http>
+
+	<beans:bean id="authenticationFilter" class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+		<beans:property name="authenticationManager" ref="authenticationManager" />
+		<beans:property name="authenticationFailureHandler" ref="securityLoginFailureHandler" />
+		<beans:property name="authenticationSuccessHandler" ref="securityLoginSuccessHandler" />
+	</beans:bean>
+
+    <beans:bean id="securityLoginFailureHandler" class="org.tec.security.spring.AuthenticationFailure">
+    </beans:bean>
+
+    <beans:bean id="securityLoginSuccessHandler" class="org.tec.security.spring.AuthenticationSuccess">
+    </beans:bean>
+
+    <beans:bean id="authenticationEntryPoint" class="org.tec.security.spring.Http401AuthenticationEntryPoint">
+    </beans:bean>
+
+    <beans:bean id="securityLogoutSuccessHandler" class="org.tec.security.spring.LogoutSuccess">
+    </beans:bean>
+
+	<beans:bean id="roleVoter" class="org.springframework.security.access.vote.RoleHierarchyVoter">
+	    <beans:constructor-arg ref="roleHierarchy" />
+	</beans:bean>
+
+	<beans:bean id="roleHierarchy" class="org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl">
+	    <beans:property name="hierarchy">
+	        <beans:value>
+	        <![CDATA[
+	            ROLE_ADMIN > ROLE_USER
+	            ROLE_USER > ROLE_GUEST
+	            ROLE_GUEST > ROLE_ANONYMOUS
+	        ]]>
+	        </beans:value>
+	    </beans:property>
+	</beans:bean>
+
+	<beans:bean id="accessDecisionManager"  class="org.springframework.security.access.vote.AffirmativeBased">
+	   <beans:property name="decisionVoters">
+	       <beans:list>
+	           <beans:ref bean="roleVoter" />
+	       </beans:list>
+	   </beans:property>
+	</beans:bean>
 
     <!-- jdbc config adapted from http://www.javacodegeeks.com/2012/07/spring-security-part-2-password.html -->
     <!-- and http://www.mkyong.com/spring-security/spring-security-form-login-using-database/ -->
-	<authentication-manager>
+	<authentication-manager  alias="authenticationManager">
 	  <authentication-provider>
       <password-encoder hash='md5'/>
       <jdbc-user-service

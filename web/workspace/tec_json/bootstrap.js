@@ -836,8 +836,10 @@ Ext.ClassManager.addNameAlternateMappings({
   "tec_json.model.User": [],
   "tec_json.store.Status": [],
   "tec_json.store.Users": [],
+  "tec_json.view.LoginForm": [],
   "tec_json.view.Main": [],
   "tec_json.view.StatusGrid": [],
+  "tec_json.view.TabPanel": [],
   "tec_json.view.Viewport": [],
   "tec_json.view.users.Form": [],
   "tec_json.view.users.Grid": []
@@ -1836,11 +1838,17 @@ Ext.ClassManager.addNameAliasMappings({
   "tec_json.model.User": [],
   "tec_json.store.Status": [],
   "tec_json.store.Users": [],
+  "tec_json.view.LoginForm": [
+    "widget.tec-login-form"
+  ],
   "tec_json.view.Main": [
     "widget.tec-main"
   ],
   "tec_json.view.StatusGrid": [
     "widget.tec-status-grid"
+  ],
+  "tec_json.view.TabPanel": [
+    "widget.tec-tab-panel"
   ],
   "tec_json.view.Viewport": [],
   "tec_json.view.users.Form": [

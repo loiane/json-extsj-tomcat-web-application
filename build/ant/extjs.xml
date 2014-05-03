@@ -8,6 +8,9 @@
         <fail message="Do not execute this file directly.  Use build.xml from project root" />
     </target>
 
+	<!-- TODO: integrated extjs build -->
+	<!-- import file="${basedir}/web/workspace/tec_json/build.xml"/ -->
+
 	<!-- this is only to generate the base workspace. -->
 	<!-- http://docs.sencha.com/cmd/4.0.0/#!/guide/command_workspace -->
 	<!--

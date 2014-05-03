@@ -74,11 +74,12 @@
 				<exclude name="WEB-INF/**/*" />
 				<exclude name="META-INF/**/*" />
 			</fileset>
-
+<!--
 			<fileset dir="${basedir}/web/security">
 				<include name="*.html" />
+				<include name="*.js" />
 			</fileset>
-
+-->
 			<lib dir="${build.temp}">
 				<include name="${jar.file.name}" />
 			</lib>
@@ -134,7 +135,13 @@
 		<copy todir="${tomcat.home}/webapps" file="${war.file}" preservelastmodified="true" verbose="${copy.verbose}" />
 	</target>
 
-	<target name="dist.update.wbapp" depends="common.init, dist.delete.log" description="deploy supporting files to tomcat">
+	<target name="dist.extjs.deploy" depends="common.init, extjs.build.dev" description="deploy supporting files to tomcat">
+		<copy todir="${tomcat.home}/webapps/tec-json-webapp">
+			<fileset dir="${extjs.build.root}">
+				<exclude name="WEB-INF/**/*" />
+				<exclude name="META-INF/**/*" />
+			</fileset>
+		</copy>
 	</target>
 
 </project>

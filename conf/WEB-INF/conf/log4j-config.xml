@@ -28,6 +28,7 @@
   <category name="org.hibernate"><priority value="WARN" /></category>
 
 <!--
+  <category name="org.springframework.security"><priority value="DEBUG" /></category>
   <category name="org.springframework.orm.hibernate4.support.OpenSessionInViewFilter"><priority value="DEBUG" /></category>
   <category name="org.springframework.orm.hibernate4.LocalSessionFactoryBean"><priority value="DEBUG" /></category>
 -->

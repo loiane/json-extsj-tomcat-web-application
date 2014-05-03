@@ -15,80 +15,53 @@
  ******************************************************************************/
 package org.tec.webapp.web.controller;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.tec.webapp.json.SerializableList;
-import org.tec.webapp.json.SerializableMap;
-import org.tec.webapp.orm.entity.User;
-import org.tec.webapp.orm.service.SystemSvc;
-import org.tec.webapp.orm.service.UserSvc;
-import org.tec.webapp.web.ControllerUtils;
 import org.tec.webapp.web.WebException;
 import org.tec.webapp.web.model.JSONModelAndView;
-import org.tec.webapp.web.model.status.StatusBean;
 
 /**
- * Job log controller
+ * test controller to send unauth response to workout login...
  */
 @Controller()
-@RequestMapping("/status")
-//@Secured("ROLE_USER")
-public class StatusController
+@RequestMapping("/test")
+public class TestResponseController
 {
   /** the logger */
   protected Log mLogger = LogFactory.getLog(this.getClass());
 
-  /** the user service */
-  @Autowired()
-  protected UserSvc mUserSvc;
-
-  /** the system service */
-  @Autowired()
-  protected SystemSvc mSystemSvc;
-
   /**
-   * get current system status
+   * send 401 response code
    *
-   * @param session the http session
+   * @param response the http response
    *
-   * @return current system status
+   * @return empty model
    */
   @RequestMapping(method = RequestMethod.GET)
-  public ModelAndView getStatus(HttpSession session)
+  public ModelAndView unauth(HttpServletResponse response)
   {
     JSONModelAndView jmv = new JSONModelAndView();
+
     try
     {
       if (mLogger.isDebugEnabled())
       {
-        mLogger.debug("status");
+        mLogger.debug("sending 401");
       }
-      SerializableMap<String, SerializableList<StatusBean>> smap = new SerializableMap<String, SerializableList<StatusBean>>();
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
 
-      SerializableList<StatusBean> slist = mSystemSvc.getStatus();
-
-      User currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
-
-      slist.add(new StatusBean("current.user", currentUser.getUserName()));
-
-      smap.put("status", slist);
-
-      //mUserSvc.init();
-
-      jmv.setData(smap);
     }
     catch (Throwable e)
     {
-      jmv.setError(new WebException("failed to get system status", e));
+      jmv.setError(new WebException("failed to set response", e));
     }
     return jmv;
   }
+
 }

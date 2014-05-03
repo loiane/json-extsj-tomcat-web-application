@@ -18,6 +18,10 @@ Ext.define('tec_json.view.users.Form', {
 		handler : function() {
 		}
 	}, {
+		text : 'reset',
+		handler : function() {
+		}
+	}, {
 		text : 'cancel',
 		handler : function() {
 		}

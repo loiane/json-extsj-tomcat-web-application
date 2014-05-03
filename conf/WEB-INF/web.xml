@@ -89,5 +89,6 @@
 
 	<session-config>
 		<tracking-mode>COOKIE</tracking-mode>
+		<session-timeout>1</session-timeout>
 	</session-config>
 </web-app>
