@@ -21,17 +21,16 @@ Ext.Ajax.on('requestexception', function(con, response, op, e) {
 			resizable : false,
 			plain : true,
 			border : false,
-			defaultFocus: 'username', //set focus on form field...
+			modal : true,
+			defaultFocus : 'username', // set focus on form field...
 			items : [ {
 				xtype : 'tec-login-form'
 			} ]
 		});
 		win.show();
-	}
-	else if (response.status == 403) {
+	} else if (response.status == 403) {
 		alert('You do not have the stones to access this content');
-	}
-	else if (response.status == 500) {
+	} else if (response.status == 500) {
 		alert(response.responseText);
 	}
 });
