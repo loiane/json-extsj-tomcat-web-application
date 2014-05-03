@@ -6,12 +6,14 @@ Ext.define('tec_json.view.TabPanel', {
 		id : "tec-status-tab",
 		title : "Status",
 		tooltip : "System status data",
-		xtype : 'tec-status-grid'
+		xtype : 'tec-status-grid',
+		region: 'north'
 	}, {
 		id : "tec-users-tab",
 		title : "Users",
 		tooltip : "user management",
-		xtype : 'tec-users-form'
+		xtype : 'tec-users-form',
+		region: 'north'
 	} ],
 	buttonAlign : "center",
 	buttons : [ {

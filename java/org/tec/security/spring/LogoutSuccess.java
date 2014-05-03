@@ -21,15 +21,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.tec.webapp.web.ControllerUtils;
 
 /**
- * Successful logout handler will clear the session user
+ * Successful logout handler just impl to see what the state of things is
  */
 public class LogoutSuccess implements LogoutSuccessHandler
 {
+  /** the logger */
+  protected Log mLogger = LogFactory.getLog(this.getClass());
 
   /**
    * {@inheritDoc}
@@ -37,6 +40,16 @@ public class LogoutSuccess implements LogoutSuccessHandler
   @Override()
   public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException
   {
-    ControllerUtils.clearCurrentUser(request.getSession());
+    try
+    {
+      if (mLogger.isDebugEnabled())
+      {
+        mLogger.debug("user logged out, session is invalid");
+      }
+    }
+    catch (Throwable e)
+    {
+      mLogger.error("processing failed", e);
+    }
   }
 }

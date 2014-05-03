@@ -51,28 +51,27 @@ public class JSONView extends AbstractView
 
       if (json != null)
       {
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "failed to process response");
       }
       else
       {
         json = (JSONSerializable) model.get(JSONModelAndView.JSON_KEY);
-      }
 
-      if (mLogger.isDebugEnabled())
-      {
-        mLogger.debug("JSON Response\n" + json.toJSON());
-      }
-
-      if (json != null)
-      {
-        response.setContentType(JSON_CONTENT_TYPE);
-        PrintWriter pw = response.getWriter();
-        pw.write(json.toJSON());
-        pw.flush();
-      }
-      else // null json for controllers that usurp the response or didn't intend to
-      {
-        mLogger.warn("null json object");
+        if (json != null)
+        {
+          if (mLogger.isDebugEnabled())
+          {
+            mLogger.debug("JSON Response\n" + json.toJSON());
+          }
+          response.setContentType(JSON_CONTENT_TYPE);
+          PrintWriter pw = response.getWriter();
+          pw.write(json.toJSON());
+          pw.flush();
+        }
+        else // null json for controllers that usurp the response or didn't intend to
+        {
+          mLogger.warn("null json object");
+        }
       }
     }
     catch (Exception e)

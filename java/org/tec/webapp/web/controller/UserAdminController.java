@@ -62,13 +62,14 @@ public class UserAdminController
 
     try
     {
+      User currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
+
       if (mLogger.isDebugEnabled())
       {
-        mLogger.debug("get users");
+        mLogger.debug("get users for " + currentUser.getUserName());
       }
-      SerializableMap<String, SerializableList<User>> smap = new SerializableMap<String, SerializableList<User>>();
 
-      User currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
+      SerializableMap<String, SerializableList<User>> smap = new SerializableMap<String, SerializableList<User>>();
 
       smap.put("users", mUserSvc.getOtherUsers(currentUser.getUserName()));
 

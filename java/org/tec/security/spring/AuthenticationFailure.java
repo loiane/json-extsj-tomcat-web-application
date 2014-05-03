@@ -21,8 +21,9 @@ import java.io.Writer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -33,6 +34,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
  */
 public class AuthenticationFailure implements AuthenticationFailureHandler
 {
+  /** the logger */
+  protected Log mLogger = LogFactory.getLog(this.getClass());
 
   /**
    * {@inheritDoc}
@@ -40,9 +43,24 @@ public class AuthenticationFailure implements AuthenticationFailureHandler
   @Override()
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException
   {
-    HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response);
-    Writer out = responseWrapper.getWriter();
-    out.write("{success:false}");
-    out.close();
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("failed login for " + request.getParameter("j_username"));
+    }
+
+    Writer out = response.getWriter();
+    try
+    {
+      out.write("{success:false}");
+    }
+    catch (IOException e)
+    {
+      mLogger.error("failed to write to response", e);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "processing failed");
+    }
+    finally
+    {
+      out.close();
+    }
   }
 }

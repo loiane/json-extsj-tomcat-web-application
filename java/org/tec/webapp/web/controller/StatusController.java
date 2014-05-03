@@ -69,8 +69,9 @@ public class StatusController
     {
       if (mLogger.isDebugEnabled())
       {
-        mLogger.debug("status");
+        mLogger.debug("get status");
       }
+
       SerializableMap<String, SerializableList<StatusBean>> smap = new SerializableMap<String, SerializableList<StatusBean>>();
 
       SerializableList<StatusBean> slist = mSystemSvc.getStatus();

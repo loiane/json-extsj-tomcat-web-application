@@ -21,8 +21,9 @@ import java.io.Writer;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.tec.webapp.web.ControllerUtils;
@@ -32,6 +33,8 @@ import org.tec.webapp.web.ControllerUtils;
  */
 public class AuthenticationSuccess implements AuthenticationSuccessHandler
 {
+  /** the logger */
+  protected Log mLogger = LogFactory.getLog(this.getClass());
 
   /**
    * {@inheritDoc}
@@ -41,9 +44,24 @@ public class AuthenticationSuccess implements AuthenticationSuccessHandler
   {
     ControllerUtils.clearCurrentUser(request.getSession());
 
-    HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response);
-    Writer out = responseWrapper.getWriter();
-    out.write("{success:true}");
-    out.close();
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("succeful login for " + request.getParameter("j_username"));
+    }
+
+    Writer out = response.getWriter();
+    try
+    {
+      out.write("{success:true}");
+    }
+    catch (IOException e)
+    {
+      mLogger.error("failed to write to response", e);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "processing failed");
+    }
+    finally
+    {
+      out.close();
+    }
   }
 }

@@ -13,7 +13,7 @@
 
 	<global-method-security pre-post-annotations="enabled"/>
 
-	<http entry-point-ref="authenticationEntryPoint" access-decision-manager-ref="accessDecisionManager">
+	<http auto-config="false" entry-point-ref="authenticationEntryPoint" access-decision-manager-ref="accessDecisionManager">
 		<!-- ** pattern means all sub dirs -->
 
 	    <intercept-url pattern="/j_spring_security_logout" access="ROLE_ANONYMOUS"/>

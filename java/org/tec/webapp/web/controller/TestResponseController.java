@@ -52,9 +52,10 @@ public class TestResponseController
     {
       if (mLogger.isDebugEnabled())
       {
-        mLogger.debug("sending 401");
+        mLogger.debug("sending error " + HttpServletResponse.SC_UNAUTHORIZED);
       }
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
+
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication required");
 
     }
     catch (Throwable e)

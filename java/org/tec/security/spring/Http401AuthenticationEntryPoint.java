@@ -21,15 +21,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
 /**
  * returns 401 unauth header to be used with pure js ajax client
- *
  */
 public class Http401AuthenticationEntryPoint implements AuthenticationEntryPoint
 {
+  /** the logger */
+  protected Log mLogger = LogFactory.getLog(this.getClass());
 
   /**
    * {@inheritDoc}
@@ -37,7 +40,11 @@ public class Http401AuthenticationEntryPoint implements AuthenticationEntryPoint
   @Override()
   public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("url requires authentication " + request.getRequestURL().toString());
+    }
     //send response code to trip error handler to prompt for login
-    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication required");
   }
 }
