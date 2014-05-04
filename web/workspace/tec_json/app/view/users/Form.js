@@ -1,6 +1,7 @@
 Ext.define('tec_json.view.users.Form', {
 	extend : 'Ext.form.Panel',
 	alias : 'widget.tec-users-form',
+	requires : ['tec_json.view.users.Grid' ],
 	frame : true,
 	title : 'Users Form',
 

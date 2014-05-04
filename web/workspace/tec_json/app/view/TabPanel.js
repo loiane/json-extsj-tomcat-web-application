@@ -1,6 +1,7 @@
 Ext.define('tec_json.view.TabPanel', {
 	extend : 'Ext.tab.Panel',
 	alias : 'widget.tec-tab-panel',
+	requires : ['tec_json.view.StatusGrid',	'tec_json.view.users.Form' ],
 	layout : "border",
 	items : [ {
 		id : "tec-status-tab",
