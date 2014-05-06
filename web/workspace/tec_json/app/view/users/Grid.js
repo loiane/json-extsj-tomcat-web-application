@@ -1,12 +1,13 @@
 /**
- * User admin grid
-*/
-
-//to enable editing
+ * Enable grid editing
+ */
 var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
     clicksToEdit: 1
 });
 
+/**
+ * User admin grid
+*/
 Ext.define('tec_json.view.users.Grid', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.tec-users-grid',
@@ -64,3 +65,4 @@ Ext.define('tec_json.view.users.Grid', {
             }
         }
 ]});
+

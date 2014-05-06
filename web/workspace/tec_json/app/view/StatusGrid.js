@@ -1,10 +1,11 @@
+/**
+ * Status grid displays current system software versions
+ */
 Ext.define('tec_json.view.StatusGrid', {
     extend: 'Ext.grid.Panel',
     alias: 'widget.tec-status-grid',
     store: 'Status',
-
     title: 'Status Grid',
-
     columns: [
         {
             text: 'Name',
