@@ -21,6 +21,9 @@ Ext.define('tec_json.controller.Users', {
 		});
 	},
 
+	/**
+	 * do container initing stuff
+	 */
 	initUsersContainer : function() {
 		Ext.getStore('Users').load();
 	}

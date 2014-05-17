@@ -16,12 +16,15 @@ Ext.define('tec_json.controller.Status', {
 			'StatusGrid' : {
 				selectionchange : this.gridSelectionChange,
 				viewready : this.onViewReady,
-				afterrender : me.initUsersContainer
+				afterrender : me.initStatusContainer
 			}
 		});
 	},
 
-	initUsersContainer : function() {
+	/**
+	 * do container initing stuff
+	 */
+	initStatusContainer : function() {
 		Ext.getStore('Status').load();
 	}
 });

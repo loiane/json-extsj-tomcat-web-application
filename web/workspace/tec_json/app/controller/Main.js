@@ -1,5 +1,6 @@
 Ext.define('tec_json.controller.Main', {
 	extend : 'Ext.app.Controller',
+	//not sure why i have to have all stores here
 	stores : [ 'Status', 'Users', 'CurrentUser' ],
 
 	/**
@@ -17,6 +18,9 @@ Ext.define('tec_json.controller.Main', {
 		});
 	},
 
+	/**
+	 * do container initing stuff
+	 */
 	initMainContainer : function() {
 		Ext.getStore('CurrentUser').load();
 	}
