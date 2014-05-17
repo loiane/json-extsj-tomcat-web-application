@@ -3,12 +3,25 @@ Ext.define('tec_json.controller.Status', {
 	stores : [ 'Status' ],
 	models : [ 'NameValue' ],
 	views : [ 'StatusGrid' ],
+
+	/**
+	 * Configure status grid event bindings.
+	 */
 	init : function() {
-		this.control({
+		var me = this;
+
+		// Component Event Listeners
+
+		me.control({
 			'StatusGrid' : {
 				selectionchange : this.gridSelectionChange,
-				viewready : this.onViewReady
+				viewready : this.onViewReady,
+				afterrender : me.initUsersContainer
 			}
 		});
+	},
+
+	initUsersContainer : function() {
+		Ext.getStore('Status').load();
 	}
 });

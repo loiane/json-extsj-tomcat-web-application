@@ -3,13 +3,25 @@ Ext.define('tec_json.controller.Users', {
 	stores : [ 'Users' ],
 	models : [ 'User' ],
 	views : [ 'users.Form' ],
-	init : function() {
 
-		this.control({
+	/**
+	 * Configure users grid event bindings.
+	 */
+	init : function() {
+		var me = this;
+
+		// Component Event Listeners
+
+		me.control({
 			'UsersGrid' : {
 				selectionchange : this.gridSelectionChange,
-				viewready : this.onViewReady
+				viewready : this.onViewReady,
+				afterrender : me.initUsersContainer
 			}
 		});
+	},
+
+	initUsersContainer : function() {
+		Ext.getStore('Users').load();
 	}
 });

@@ -1,6 +1,6 @@
 Ext.define('tec_json.controller.Main', {
 	extend : 'Ext.app.Controller',
-	stores : [ 'Status', 'Users' ],
+	stores : [ 'Status', 'Users', 'CurrentUser' ],
 
 	/**
 	 * Configure application event bindings.
@@ -18,6 +18,6 @@ Ext.define('tec_json.controller.Main', {
 	},
 
 	initMainContainer : function() {
-		Ext.getStore('Status').load();
+		Ext.getStore('CurrentUser').load();
 	}
 });

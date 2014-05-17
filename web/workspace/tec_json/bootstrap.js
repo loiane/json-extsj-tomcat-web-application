@@ -829,11 +829,13 @@ Ext.ClassManager.addNameAlternateMappings({
     "Ext.Window"
   ],
   "tec_json.Application": [],
+  "tec_json.controller.Login": [],
   "tec_json.controller.Main": [],
   "tec_json.controller.Status": [],
   "tec_json.controller.Users": [],
   "tec_json.model.NameValue": [],
   "tec_json.model.User": [],
+  "tec_json.store.CurrentUser": [],
   "tec_json.store.Status": [],
   "tec_json.store.Users": [],
   "tec_json.view.LoginForm": [],
@@ -1831,11 +1833,13 @@ Ext.ClassManager.addNameAliasMappings({
     "widget.window"
   ],
   "tec_json.Application": [],
+  "tec_json.controller.Login": [],
   "tec_json.controller.Main": [],
   "tec_json.controller.Status": [],
   "tec_json.controller.Users": [],
   "tec_json.model.NameValue": [],
   "tec_json.model.User": [],
+  "tec_json.store.CurrentUser": [],
   "tec_json.store.Status": [],
   "tec_json.store.Users": [],
   "tec_json.view.LoginForm": [
