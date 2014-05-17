@@ -5,7 +5,7 @@ Ext.define('tec_json.controller.Status', {
 	views : [ 'StatusGrid' ],
 	init : function() {
 		this.control({
-			'UsersGrid' : {
+			'StatusGrid' : {
 				selectionchange : this.gridSelectionChange,
 				viewready : this.onViewReady
 			}
