@@ -59,12 +59,12 @@ import java.util.Map;
  */
 @Entity()
 @Table(name = "users", catalog = "webapp",
-indexes = {
-    @Index(name = "user_pwd_en_idx", unique = true, columnList = "user_name, password, enabled"),
-    @Index(name = "user_idx", unique = true, columnList = "user_name,") },
-uniqueConstraints = {
-    @UniqueConstraint(name = "user_name_uc", columnNames = { "user_name" }),
-    @UniqueConstraint(name = "enail_uc", columnNames = { "email" }) })
+    indexes = {
+      @Index(name = "user_pwd_en_idx", unique = true, columnList = "user_name, password, enabled"),
+      @Index(name = "user_idx", unique = true, columnList = "user_name,") },
+    uniqueConstraints = {
+      @UniqueConstraint(name = "user_name_uc", columnNames = { "user_name" }),
+      @UniqueConstraint(name = "enail_uc", columnNames = { "email" }) })
 public class User implements JSONSerializable
 {
   /** the anonymous user name */

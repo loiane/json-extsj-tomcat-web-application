@@ -6,6 +6,15 @@
 
  	<display-name>json extsjs skeleton</display-name>
 
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error</location>
+    </error-page>
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/error</location>
+    </error-page>
+
 	<!-- Log4j configuration embedded in webapplication -->
 	<!-- This needs to be first listener -->
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/util/Log4jConfigListener.html -->

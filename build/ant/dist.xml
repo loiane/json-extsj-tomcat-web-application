@@ -14,10 +14,13 @@
 	<property name="jar.file" value="${build.temp}/${jar.file.name}" />
 	<property name="war.file.name" value="tec-json-webapp.war" />
 	<property name="war.file" value="${build.temp}/${war.file.name}" />
-	<!-- TODO: variablize he build type -->
+	<property name="war.temp" value="${build.temp}/war.tmp" />
+
+	<!-- TODO: variablize the build type -->
 
 	<target name="dist.checkstyle" depends="common.init" unless="already.checkstyle" description="runs checkstyle rules over java code">
 		<property name="already.checkstyle" value="true" />
+<!--
 		<cs:checkstyle config="${basedir}/build/checkstyle/checkstyle.xml">
 
 			<classpath>
@@ -32,6 +35,7 @@
 				<exclude name="**/data/**" />
 			</fileset>
 		</cs:checkstyle>
+-->
 	</target>
 
 	<target name="dist.compile" depends="dist.checkstyle" unless="already.compile" description="Compile eEdtions classes">
@@ -45,7 +49,6 @@
 			debug="on"
 			source="1.7" target="1.7"
 			includeAntRuntime="off">
-			<exclude name="com/cds/eeditions/orm/data/gen/**" />
 		</javac>
 	</target>
 
@@ -64,7 +67,38 @@
 		</jar>
 	</target>
 
-	<target name="dist.war" depends="hibernate.props,dist.jar,extjs.build.dev" unless="already.war" description="build eEdtions jar">
+	<target name="dist.war.init" unless="already.war" description="build eEdtions jar">
+		<property name="already.dist.war.init" value="true" />
+		<mkdir dir="${war.temp}/META-INF" />
+		<mkdir dir="${war.temp}/WEB-INF/conf" />
+
+		<copy file="${basedir}/conf/context.xml.template"
+              overwrite="true"
+              force="true"
+              tofile="${war.temp}/META-INF/context.xml"/>
+
+        <replace file="${war.temp}/META-INF/context.xml" token="$database.datasource$" value="${database.datasource}"/>
+        <replace file="${war.temp}/META-INF/context.xml" token="$database.host$" value="${database.host}"/>
+        <replace file="${war.temp}/META-INF/context.xml" token="$database.host$" value="${database.host}"/>
+        <replace file="${war.temp}/META-INF/context.xml" token="$database.port$" value="${database.port}"/>
+        <replace file="${war.temp}/META-INF/context.xml" token="$database.name$" value="${database.name}"/>
+        <replace file="${war.temp}/META-INF/context.xml" token="$database.username$" value="${database.username}"/>
+        <replace file="${war.temp}/META-INF/context.xml" token="$database.password$" value="${database.password}"/>
+
+		<copy file="${basedir}/conf/hibernate.properties.template"
+              overwrite="true"
+              force="true"
+              tofile="${war.temp}/WEB-INF/conf/hibernate.properties"/>
+
+        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$hibernate.dialect$" value="${hibernate.dialect}"/>
+        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.url$" value="${database.url}"/>
+        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.driver$" value="${database.driver}"/>
+        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.username$" value="${database.username}"/>
+        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.password$" value="${database.password}"/>
+
+	</target>
+
+	<target name="dist.war" depends="dist.jar,extjs.build.dev,dist.war.init" unless="already.war" description="build eEdtions jar">
 		<property name="already.war" value="true" />
 		<ivy:cachepath pathid="runtime.ivy" conf="runtime"/>
 
@@ -106,11 +140,11 @@
 				<exclude name="classes/**/*" />
 			</webinf>
 
-			<webinf dir="${build.temp}/WEB-INF">
-				<include name="**/hibernate.properties" />
-			</webinf>
+			<fileset dir="${war.temp}">
+				<exclude name="META-INF/**/*" />
+			</fileset>
 
-			<metainf dir="${basedir}/conf/META-INF" />
+			<metainf dir="${war.temp}/META-INF" />
 		</war>
 	</target>
 

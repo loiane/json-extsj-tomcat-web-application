@@ -1,8 +1,8 @@
 ####
 # generated file see build/default.properties
 ####
-hibernate.dialect=$hibernate_dialect$
-jdbc.driver=$jdbc_driver$
-jdbc.url=$jdbc_url$
-jdbc.user=$jdbc_user$
-jdbc.password=$jdbc_password$
+hibernate.dialect=$hibernate.dialect$
+database.driver=$database.driver$
+database.url=$database.url$
+database.username=$database.username$
+database.password=$database.password$

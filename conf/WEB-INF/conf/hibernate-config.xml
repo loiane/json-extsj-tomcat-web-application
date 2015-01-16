@@ -27,6 +27,7 @@
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/LocalSessionFactoryBuilder.html -->
 	<!-- See https://docs.jboss.org/hibernate/orm/4.1/javadocs/?org/hibernate/SessionFactory.html -->
 	<!-- See https://docs.jboss.org/hibernate/orm/4.1/javadocs/?org/hibernate/Session.html -->
+	<!--
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -42,33 +43,52 @@
 				<prop key="current_session_context_class">thread</prop>
 				<prop key="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</prop>
 				<prop key="show_sql">true</prop>
-				<!-- prop key="hibernate.hbm2ddl.auto">create</prop -->
+				<! - - prop key="hibernate.hbm2ddl.auto">create</prop - - >
 			</props>
 		</property>
 	</bean>
+	-->
 
 	<!-- Declare a datasource that has pooling capabilities -->
 	<!-- see http://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html -->
 	<!-- see http://www.mchange.com/projects/c3p0/apidocs/com/mchange/v2/c3p0/ComboPooledDataSource.html -->
+	<!-- TODO move to hikari
 	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		destroy-method="close">
-		<property name="driverClass" value="${jdbc.driver}" />
-		<property name="jdbcUrl" value="${jdbc.url}" />
-		<property name="user" value="${jdbc.user}" />
-		<property name="password" value="${jdbc.password}" />
+		<property name="driverClass" value="${database.driver}" />
+		<property name="jdbcUrl" value="${database.url}" />
+		<property name="user" value="${database.username}" />
+		<property name="password" value="${database.password}" />
 		<property name="acquireIncrement" value="5" />
 		<property name="idleConnectionTestPeriod" value="60" />
 		<property name="maxPoolSize" value="10" />
 		<property name="maxStatements" value="5" />
 		<property name="minPoolSize" value="3" />
 	</bean>
+	-->
 
-	<!-- Declare a transaction manager -->
+    <!-- JNDI datasource comming from META-INF/ -->
+	<!-- http://stackoverflow.com/questions/9183321/how-to-use-jndi-datasource-provided-by-tomcat-in-spring -->
+	<!-- http://tomcat.apache.org/tomcat-7.0-doc/jndi-resources-howto.html -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:/comp/env/jdbc/database"/>
+    </bean>
+
+
+	<!-- Declare a hibernate transaction manager -->
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/HibernateTransactionManager.html -->
+	<!--
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	-->
+	<!-- Declare a jdbc transaction manager -->
+	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/datasource/DataSourceTransactionManager.html -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="oeDataSource" />
+    </bean>
 
 	<!-- Enable annotation style of managing transactions -->
 	<!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/transaction.html -->

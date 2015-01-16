@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.servlet.view.AbstractView;
 import org.tec.webapp.json.JSONSerializable;
 import org.tec.webapp.web.model.JSONModelAndView;
@@ -35,9 +36,6 @@ public class JSONView extends AbstractView
 {
   /** the logger */
   protected Log mLogger = LogFactory.getLog(this.getClass());
-
-  /** the response content type */
-  protected static final String JSON_CONTENT_TYPE = "application/json; charset=UTF-8";
 
   /**
    * {@inheritDoc}
@@ -63,7 +61,7 @@ public class JSONView extends AbstractView
           {
             mLogger.debug("JSON Response\n" + json.toJSON());
           }
-          response.setContentType(JSON_CONTENT_TYPE);
+          response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
           PrintWriter pw = response.getWriter();
           pw.write(json.toJSON());
           pw.flush();

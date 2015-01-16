@@ -34,7 +34,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * user role class
  */
 @Entity()
-@Table(name = "user_role", catalog = "webapp")
+@Table(name = "user_roles", catalog = "webapp")
 public class UserRole implements Serializable
 {
   /** serial guid */

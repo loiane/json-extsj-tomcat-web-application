@@ -14,26 +14,29 @@
     <!-- Rollover at midnight each day -->
     <param name="DatePattern" value="'.'yyyy-MM-dd"/>
 
-    <layout class="org.apache.log4j.PatternLayout">
+    <layout class="org.apache.log4j.EnhancedPatternLayout">
       <!-- The default pattern: Date Priority [Category] Message\n -->
-      <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+      <param name="ConversionPattern" value="%d{ISO8601} %5p %C - %m%n"/>
     </layout>
   </appender>
 
+  <!--  make everything go to warn, seems like root logger should do this -->
   <category name="org"><priority value="WARN" /></category>
   <category name="com"><priority value="WARN" /></category>
   <category name="java"><priority value="WARN" /></category>
-
-  <category name="org.springframework"><priority value="WARN" /></category>
-  <category name="org.hibernate"><priority value="WARN" /></category>
+  <category name="net"><priority value="WARN" /></category>
+  <category name="httpclient"><priority value="WARN" /></category>
 
   <category name="org.tec"><priority value="DEBUG" /></category>
 
 <!--
+  <category name="org.springframework"><priority value="WARN" /></category>
+  <category name="org.hibernate"><priority value="WARN" /></category>
   <category name="org.springframework.security"><priority value="DEBUG" /></category>
   <category name="org.springframework.orm.hibernate4.support.OpenSessionInViewFilter"><priority value="DEBUG" /></category>
   <category name="org.springframework.orm.hibernate4.LocalSessionFactoryBean"><priority value="DEBUG" /></category>
 -->
+
   <!-- ======================= -->
   <!-- Setup the Root category -->
   <!-- ======================= -->

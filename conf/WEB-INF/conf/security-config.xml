@@ -81,7 +81,7 @@
         data-source-ref='dataSource'
 	  	users-by-username-query='select user_name,password,enabled from users where user_name=?'
 	    authorities-by-username-query='select u.user_name, ur.role as authority from users u
-inner join user_role ur on u.user_id = ur.user_id
+inner join user_roles ur on u.user_id = ur.user_id
 where u.user_name=?'/>
 	  </authentication-provider>
 	</authentication-manager>

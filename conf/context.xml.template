@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context cookies="true" reloadable="true">
+
+    <!-- Default set of monitored resources -->
+    <!-- updates should be done by redeploy or restart
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <WatchedResource>WEB-INF/classes</WatchedResource>
+    <WatchedResource>WEB-INF/lib</WatchedResource>
+	-->
+
+    <!-- disable session persistence across Tomcat restarts -->
+    <Manager pathname="" />
+
+    <!-- Uncomment this to enable Comet connection tracking (provides events
+         on session expiration as well as webapp lifecycle) -->
+    <!--
+    <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" />
+    -->
+
+	<!--
+	OE staging pool
+	@see http://www.javafind.net/gate.jsp?q=/library/16/mysql-connector-java-5.1.29/apidocs/com/mysql/jdbc/jdbc2/optional/MysqlDataSource.html
+	@see http://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html
+	@see https://github.com/brettwooldridge/HikariCP
+	TODO values should be tooled better
+	-->
+   <Resource
+            auth="Container"
+            type="javax.sql.DataSource"
+            name="jdbc/database"
+            factory="com.zaxxer.hikari.HikariJNDIFactory"
+            dataSourceClassName="$database.datasource$"
+            idleTimeout="900000"
+            maxLifetime="3600000"
+            maximumPoolSize="50"
+            minimumIdle="5"
+            poolName="oeDatabase"
+            registerMbeans="false"
+            leakDetectionThreshold="30000"
+            dataSource.serverName="$database.host$"
+            dataSource.portNumber="$database.port$"
+            dataSource.databaseName="$database.name$"
+            dataSource.user="$database.username$"
+            dataSource.password="$database.password$"
+            dataSource.cachePrepStmts="true"
+            dataSource.prepStmtCacheSize="250"
+            dataSource.prepStmtCacheSqlLimit="2048"
+            dataSource.useServerPrepStmts="true"
+            dataSource.characterEncoding="UTF-8"
+            />
+
+</Context>
