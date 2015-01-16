@@ -67,6 +67,7 @@
 			<exclude module="javax.servlet-api" />
 		</dependency>
 		<dependency org="org.springframework" name="spring-orm" rev="4.0.2.RELEASE" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
+		<dependency org="org.springframework" name="spring-jdbc" rev="4.0.2.RELEASE" conf="compile->compile(*),master(*);runtime->runtime(*)"/>
 		<dependency org="org.springframework" name="spring-tx" rev="4.0.2.RELEASE" conf="compile->compile(*),master(*);runtime->runtime(*)">
 			<exclude module="uow" />
 		</dependency>
