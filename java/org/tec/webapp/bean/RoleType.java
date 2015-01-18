@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.tec.webapp.orm.entity;
+package org.tec.webapp.bean;
 
 /**
  * the role type used for access

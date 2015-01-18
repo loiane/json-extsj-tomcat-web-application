@@ -8,32 +8,40 @@
         <fail message="Do not execute this file directly.  Use build.xml from project root" />
     </target>
 
-    <property name="ivy.report.dir" value="${basedir}/report/ivy" />
+    <property name="ivy.report.dir" value="${report.dir}/ivy" />
 
-	<ivy:cachepath pathid="classpath.ivy" conf="compile"/>
-	<ivy:cachepath pathid="classpath.restrict.ivy" conf="restrict"/>
+    <target name="ivy.init" depends="common.init" unless="alrady.ivy.init" description="resolves dependencies into your ivy cache - only needs to be run upon initial checkout or when your ivy.xml changes">
+		<property name="alrady.ivy.init" value="true" />
 
-	<!-- build compile classpath -->
-	<path id="classpath.compile">
-		<path refid="classpath.ivy"/>
-		<path refid="classpath.restrict.ivy"/>
-	</path>
+    	<ivy:resolve validate="true"/>
 
-    <target name="ivy.resolve" depends="common.init" description="resolves dependencies into your ivy cache - only needs to be run upon initial checkout or when your ivy.xml changes">
-        <ivy:retrieve/>
+    	<ivy:cachepath pathid="classpath.compile.ivy" conf="compile, tomcat"/>
+
+      	<ivy:cachepath pathid="classpath.ant.ivy" conf="ant"/>
+
+    	<!-- build compile classpath -->
+    	<path id="classpath.compile">
+    		<path refid="classpath.compile.ivy"/>
+    	</path>
+
+    	<!-- build ant classpath -->
+    	<path id="classpath.ant">
+    		<path refid="classpath.ant.ivy"/>
+    	</path>
     </target>
 
     <target name="ivy.clean" depends="common.init" description="clears the ivy cache">
     	<ivy:cleancache />
     </target>
 
-    <target name="ivy.report" depends="common.init" description="gens a report on dependencies">
+    <target name="ivy.report" depends="ivy.init" description="gens a report on dependencies">
         <delete dir="${ivy.report.dir}" />
         <mkdir dir="${ivy.report.dir}" />
-        <ivy:retrieve/>
+
    		<ivy:report todir="${ivy.report.dir}" />
+
+        <ivy:retrieve
+                pattern="${ivy.report.dir}/lib/[conf]/[artifact]-[revision](-[classifier]).[ext]" />
     </target>
-    <target name="ivy.runtime">
-    	<ivy:cachepath pathid="runtime.ivy" conf="runtime"/>
-    </target>
+
 </project>

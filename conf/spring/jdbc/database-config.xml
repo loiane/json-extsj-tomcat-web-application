@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+   http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- enable autowiring of beans -->
+	<!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config -->
+	<context:annotation-config />
+
+    <!-- the root package spring will look for annotated controller classes -->
+    <!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-classpath-scanning -->
+    <context:component-scan base-package="org.tec.webapp.jdbc"/>
+
+    <!-- JNDI datasource comming from META-INF/ -->
+	<!-- http://stackoverflow.com/questions/9183321/how-to-use-jndi-datasource-provided-by-tomcat-in-spring -->
+	<!-- http://tomcat.apache.org/tomcat-7.0-doc/jndi-resources-howto.html -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:/comp/env/jdbc/database"/>
+    </bean>
+
+	<!-- Declare a jdbc transaction manager -->
+	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/datasource/DataSourceTransactionManager.html -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="oeDataSource" />
+    </bean>
+
+	<!-- jdbc template for jdbc operations -->
+	<!-- @see http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="oeDataSource"></property>
+    </bean>
+
+	<!-- Enable annotation style of managing transactions -->
+	<!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/transaction.html -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+</beans>

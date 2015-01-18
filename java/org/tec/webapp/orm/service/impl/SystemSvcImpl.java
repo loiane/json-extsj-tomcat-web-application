@@ -30,7 +30,7 @@ import org.springframework.core.SpringVersion;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.stereotype.Service;
 import org.tec.webapp.json.SerializableList;
-import org.tec.webapp.orm.service.SystemSvc;
+import org.tec.webapp.service.SystemSvc;
 import org.tec.webapp.web.model.status.StatusBean;
 
 /**

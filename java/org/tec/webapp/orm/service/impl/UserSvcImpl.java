@@ -15,8 +15,6 @@
  ******************************************************************************/
 package org.tec.webapp.orm.service.impl;
 
-import java.util.Collection;
-
 import javax.transaction.Transactional;
 
 import org.apache.commons.logging.Log;
@@ -26,7 +24,8 @@ import org.springframework.stereotype.Service;
 import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.orm.dao.UserDao;
 import org.tec.webapp.orm.entity.User;
-import org.tec.webapp.orm.service.UserSvc;
+import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.service.UserSvc;
 
 /**
  * the user service
@@ -50,7 +49,7 @@ public class UserSvcImpl implements UserSvc
    */
   @Override()
   @Transactional()
-  public void insert(User user)
+  public void insert(UserBean user)
   {
     mUserDao.insert(user);
   }
@@ -60,7 +59,7 @@ public class UserSvcImpl implements UserSvc
    */
   @Override()
   @Transactional()
-  public void update(User user)
+  public void update(UserBean user)
   {
     mUserDao.update(user);
   }
@@ -70,7 +69,7 @@ public class UserSvcImpl implements UserSvc
    */
   @Override()
   @Transactional()
-  public void updatePassword(User user)
+  public void updatePassword(UserBean user)
   {
     mUserDao.updatePassword(user);
   }
@@ -79,7 +78,7 @@ public class UserSvcImpl implements UserSvc
    */
   @Override()
   @Transactional()
-  public void delete(User user)
+  public void delete(UserBean user)
   {
     mUserDao.delete(user);
   }
@@ -88,32 +87,8 @@ public class UserSvcImpl implements UserSvc
    * {@inheritDoc}
    */
   @Override()
-  public void init()
-  {
-    Collection<User> users = User.getDefaultUsers();
-
-    for (User u: users)
-    {
-      User user = mUserDao.getUser(u.getUserName());
-
-      if (user == null)
-      {
-        mUserDao.insert(u);
-
-        user = mUserDao.getUser(u.getUserName());
-        u.setUserId(user.getUserId());
-
-        mUserDao.updatePassword(u);
-      }
-    }
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override()
   @Transactional()
-  public User getUser(String userName)
+  public UserBean getUser(String userName)
   {
     return mUserDao.getUser(userName);
   }

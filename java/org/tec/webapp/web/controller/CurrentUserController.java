@@ -24,10 +24,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.json.JSONSerializable;
 import org.tec.webapp.json.SerializableMap;
-import org.tec.webapp.orm.entity.User;
-import org.tec.webapp.orm.service.UserSvc;
+import org.tec.webapp.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
 import org.tec.webapp.web.WebException;
 import org.tec.webapp.web.model.JSONModelAndView;
@@ -61,7 +61,7 @@ public class CurrentUserController
 
     try
     {
-      User currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
+      UserBean currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
 
       if (mLogger.isDebugEnabled())
       {

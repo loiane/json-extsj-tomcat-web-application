@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.json.SerializableMap;
-import org.tec.webapp.orm.entity.User;
-import org.tec.webapp.orm.service.SystemSvc;
-import org.tec.webapp.orm.service.UserSvc;
+import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.service.SystemSvc;
+import org.tec.webapp.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
 import org.tec.webapp.web.WebException;
 import org.tec.webapp.web.model.JSONModelAndView;
@@ -76,7 +76,7 @@ public class StatusController
 
       SerializableList<StatusBean> slist = mSystemSvc.getStatus();
 
-      User currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
+      UserBean currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
 
       slist.add(new StatusBean("current.user", currentUser.getUserName()));
 

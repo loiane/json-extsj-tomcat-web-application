@@ -3,6 +3,8 @@
 ####
 hibernate.dialect=$hibernate.dialect$
 database.driver=$database.driver$
+database.datasource=$database.datasource$
 database.url=$database.url$
 database.username=$database.username$
 database.password=$database.password$
+database.test.sql=$database.test.sql$

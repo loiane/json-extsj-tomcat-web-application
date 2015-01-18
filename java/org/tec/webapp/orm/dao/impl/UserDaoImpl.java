@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 import org.tec.security.Checksum;
 import org.tec.webapp.orm.dao.UserDao;
 import org.tec.webapp.orm.entity.User;
+import org.tec.webapp.bean.UserBean;
 
 /**
  * user data access object
@@ -45,7 +46,7 @@ public class UserDaoImpl implements UserDao
    * {@inheritDoc}
    */
   @Override()
-  public void insert(User user)
+  public void insert(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
     session.persist(user);
@@ -55,7 +56,7 @@ public class UserDaoImpl implements UserDao
    * {@inheritDoc}
    */
   @Override()
-  public void update(User user)
+  public void update(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
     session.save(user);
@@ -67,7 +68,7 @@ public class UserDaoImpl implements UserDao
    * from the standard user operations.
    */
   @Override()
-  public void updatePassword(User user)
+  public void updatePassword(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
 
@@ -81,7 +82,7 @@ public class UserDaoImpl implements UserDao
    * {@inheritDoc}
    */
   @Override()
-  public void delete(User user)
+  public void delete(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
     session.delete(user);
@@ -92,7 +93,7 @@ public class UserDaoImpl implements UserDao
    */
   @Override()
   @SuppressWarnings("unchecked")
-  public User getUser(String userName)
+  public UserBean getUser(String userName)
   {
     Session session = mSessionFactory.getCurrentSession();
 

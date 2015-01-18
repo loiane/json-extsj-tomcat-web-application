@@ -197,7 +197,7 @@ public final class Checksum
    */
   public static void main(String[] args) throws Exception
   {
-    String arg = "user";
+    String arg = "guest";
     //System.out.println("test");
     System.out.println("MD5               [" + getMD5(arg) + "]");
     //System.out.println("SHA               [" + getSHA1(arg) + "]");

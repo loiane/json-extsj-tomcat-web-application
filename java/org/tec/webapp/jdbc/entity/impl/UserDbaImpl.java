@@ -13,53 +13,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.tec.webapp.orm.dao;
+package org.tec.webapp.jdbc.entity.impl;
 
 import java.util.List;
-
-import org.tec.webapp.orm.entity.User;
 import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.jdbc.entity.BaseEntity;
 
 /**
- * user data access interface
+ * the user entity DB access impl
  */
-public interface UserDao
+public class UserDbaImpl extends BaseEntity
 {
-  /**
-   * insert a new user
-   * @param user the user to insert
-   */
-  void insert(UserBean user);
 
   /**
-   * update a user
-   * @param user the user to update
+   * {@inheritDoc}
    */
-  void update(UserBean user);
+  public void insert(UserBean user)
+  {
+  }
 
   /**
-   * update the user password
-   * @param user the user to update
+   * {@inheritDoc}
    */
-  void updatePassword(UserBean user);
+  public void update(UserBean user)
+  {
+  }
 
   /**
-   * delete a user
-   * @param user the user to delete
+   * {@inheritDoc}
+   * This function is needed because we need to exclude the password
+   * from the standard user operations.
    */
-  void delete(UserBean user);
+  public void updatePassword(UserBean user)
+  {
+  }
 
   /**
-   * get user by id
-   * @param userName the user Sname
-   * @return the user for the given name
+   * {@inheritDoc}
    */
-  UserBean getUser(String userName);
+  public void delete(UserBean user)
+  {
+  }
 
   /**
-   * get the list of the other users
-   * @param userName the current user to exclude from the list
-   * @return the list of other users
+   * {@inheritDoc}
    */
-  List<User> getOtherUsers(String userName);
+  public UserBean getUser(String userName)
+  {
+    return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public List<UserBean> getOtherUsers(String userName)
+  {
+    return (List<UserBean>)  null;
+  }
 }

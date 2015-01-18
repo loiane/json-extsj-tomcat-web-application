@@ -35,7 +35,7 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
 			/WEB-INF/conf/security-config.xml,
-		    /WEB-INF/conf/hibernate-config.xml
+		    /WEB-INF/conf/database-config.xml
 		</param-value>
 	</context-param>
 
@@ -71,6 +71,7 @@
 
 	<!-- sets up the session for hibernate transactionss -->
 	<!-- http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/support/OpenSessionInViewFilter.html -->
+	<!-- TODO doesn't need to be present for jdbc impl -->
 	<filter>
 		<filter-name>hibernateFilter</filter-name>
 		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>

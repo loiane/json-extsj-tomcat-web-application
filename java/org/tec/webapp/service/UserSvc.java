@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.tec.webapp.orm.service;
+package org.tec.webapp.service;
 
 import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.orm.entity.User;
+import org.tec.webapp.bean.UserBean;
 
 /**
  * the user service interface
@@ -27,37 +28,32 @@ public interface UserSvc
    * insert a new user
    * @param user the user to insert
    */
-  void insert(User user);
+  void insert(UserBean user);
 
   /**
    * update a user
    * @param user the user to update
    */
-  void update(User user);
+  void update(UserBean user);
 
   /**
    * update the user password
    * @param user the user to update
    */
-  void updatePassword(User user);
+  void updatePassword(UserBean user);
 
   /**
    * delete a user
    * @param user the user to delete
    */
-  void delete(User user);
-
-  /**
-   * initialize the 3 default users
-   */
-  void init();
+  void delete(UserBean user);
 
   /**
    * get user by id
-   * @param userName the user Sname
+   * @param userName the user name
    * @return the user for the given name
    */
-  User getUser(String userName);
+  UserBean getUser(String userName);
 
   /**
    * get the list of the other users

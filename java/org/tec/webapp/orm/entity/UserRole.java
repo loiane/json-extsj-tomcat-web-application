@@ -28,17 +28,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.bean.RoleType;
+import org.tec.webapp.bean.UserRoleBean;
 
 /**
  * user role class
  */
 @Entity()
-@Table(name = "user_roles", catalog = "webapp")
-public class UserRole implements Serializable
+@Table(name = "user_role", catalog = "webapp")
+public class UserRole implements Serializable, UserRoleBean
 {
   /** serial guid */
   private static final long serialVersionUID = 1L;
+
+  /** the json config to filter out password when sending data to client */
+  protected static final JsonConfig JSON_CONFIG = new JsonConfig();
 
   /** the user role surrogate key */
   @Id()
@@ -47,9 +56,9 @@ public class UserRole implements Serializable
   protected int mUserRoleId;
 
   /** the user object tied to this record */
-  @ManyToOne()
+  @ManyToOne(targetEntity = User.class)
   @JoinColumn(name = "user_id", nullable = false, updatable = false)
-  protected User mUser;
+  protected UserBean mUser;
 
   /** the user role type assignment */
   @Column(name = "role", length = 16, nullable = false, updatable = false)
@@ -57,33 +66,37 @@ public class UserRole implements Serializable
   protected RoleType mRole;
 
   /**
-   * @return the userRoleId
+   * {@inheritDoc}
    */
+  @Override()
   public int getUserRoleId()
   {
     return mUserRoleId;
   }
 
   /**
-   * @param userRoleId the userRoleId to set
+   * {@inheritDoc}
    */
+  @Override()
   public void setUserRoleId(int userRoleId)
   {
     mUserRoleId = userRoleId;
   }
 
   /**
-   * @return the user
+   * {@inheritDoc}
    */
-  public User getUser()
+  @Override()
+  public UserBean getUser()
   {
     return mUser;
   }
 
   /**
-   * @param user the user to set
+   * {@inheritDoc}
    */
-  public void setUser(User user)
+  @Override()
+  public void setUser(UserBean user)
   {
     mUser = user;
   }
@@ -91,6 +104,7 @@ public class UserRole implements Serializable
   /**
    * @return the authority
    */
+  @Override()
   public RoleType getRole()
   {
     return mRole;
@@ -99,9 +113,19 @@ public class UserRole implements Serializable
   /**
    * @param role the authority to set
    */
+  @Override()
   public void setRole(RoleType role)
   {
     mRole = role;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override()
+  public String toJSON()
+  {
+    return JSONObject.fromObject(this, JSON_CONFIG).toString();
   }
 
   /**

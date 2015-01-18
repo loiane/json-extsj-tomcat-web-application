@@ -21,8 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.security.core.context.SecurityContext;
 import org.tec.webapp.orm.entity.User;
-import org.tec.webapp.orm.service.UserSvc;
-
+import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.service.UserSvc;
 
 /**
  * utils for common controller functionality
@@ -52,9 +52,9 @@ public final class ControllerUtils
    * @param userSvc the user service
    * @return the current user
    */
-  public static User getCurrentUser(HttpSession session, UserSvc userSvc)
+  public static UserBean getCurrentUser(HttpSession session, UserSvc userSvc)
   {
-    User u = (User) session.getAttribute(CURRENT_USER_KEY);
+    UserBean u = (UserBean) session.getAttribute(CURRENT_USER_KEY);
 
     if (u == null)
     {
@@ -75,9 +75,9 @@ public final class ControllerUtils
    * @param session the current session
    * @return the current user
    */
-  public static User clearCurrentUser(HttpSession session)
+  public static UserBean clearCurrentUser(HttpSession session)
   {
-    User u = (User) session.getAttribute(CURRENT_USER_KEY);
+    UserBean u = (UserBean) session.getAttribute(CURRENT_USER_KEY);
 
     if (u != null)
     {

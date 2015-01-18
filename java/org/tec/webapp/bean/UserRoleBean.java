@@ -13,20 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.tec.webapp.orm.service;
+package org.tec.webapp.bean;
 
-import org.tec.webapp.json.SerializableList;
-import org.tec.webapp.web.model.status.StatusBean;
-
+import org.tec.webapp.json.JSONSerializable;
 
 /**
- * this is the system service interface
+ * user role interface
  */
-public interface SystemSvc
+public interface UserRoleBean extends JSONSerializable
 {
+
   /**
-   * get the system status
-   * @return the list of statuses
+   * @return the userRoleId
    */
-  SerializableList<StatusBean> getStatus();
+  int getUserRoleId();
+
+  /**
+   * @param userRoleId the userRoleId to set
+   */
+  void setUserRoleId(int userRoleId);
+
+  /**
+   * @return the user
+   */
+  UserBean getUser();
+
+  /**
+   * @param user the user to set
+   */
+  void setUser(UserBean user);
+
+  /**
+   * @return the authority
+   */
+  RoleType getRole();
+
+  /**
+   * @param role the authority to set
+   */
+  void setRole(RoleType role);
+
 }

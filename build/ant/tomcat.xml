@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="tomcat" default="tomcat.fail">
+
+    <description>tomcat tasks</description>
+
+	<target name="tomcat.fail">
+        <fail message="Do not execute this file directly.  Use build.xml from project root" />
+    </target>
+
+    <property name="tomcat.lib.dir" value="${tomcat.home}/lib"/>
+    <property name="tomcat.debug" value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${tomcat.suspend.debug},address=${tomcat.debug.port}"/>
+    <property name="coverage.data.file" value="-Dnet.sourceforge.cobertura.datafile=${tomcat.home}/cobertura.ser"/>
+
+    <target name="tomcat.installed" unless="already.tomcat.installed">
+		<property name="already.tomcat.installed" value="true" />
+        <if>
+			<not>
+				<resourceexists>
+					<file file="${tomcat.home}"/>
+				</resourceexists>
+			</not>
+            <then>
+				<fail message="cannot find ${tomcat.home}"/>
+            </then>
+        </if>
+    </target>
+
+	<target name="tomcat.clean" unless="already.tomcat.clean" description="delete tomcat log files">
+		<property name="already.tomcat.clean" value="true" />
+
+
+		<!-- is brute force file or dir sets don't seem to delete subdirs... -->
+        <delete verbose="true" includeemptydirs="true" quiet="true" dir="${catalina.base}/logs" />
+        <mkdir dir="${catalina.base}/logs" />
+		<delete verbose="true" includeemptydirs="true" quiet="true" dir="{catalina.base}/temp" />
+        <mkdir dir="${catalina.base}/temp" />
+		<delete verbose="true" includeemptydirs="true" quiet="true" dir="${catalina.base}/tmp" />
+        <mkdir dir="${catalina.base}/tmp" />
+		<delete verbose="true" includeemptydirs="true" quiet="true" dir="${catalina.base}/work" />
+        <mkdir dir="${catalina.base}/work" />
+
+	</target>
+
+	<target name="tomcat.start" depends="tomcat.installed" description="start local tomcat instance">
+		<if>
+            <os family="windows"/>
+			<then>
+				<property name="tomcat.start.cmd" value="startup.bat"/>
+			</then>
+			<else>
+				<property name="tomcat.start.cmd" value="startup.sh"/>
+			</else>
+		</if>
+
+        <exec
+			spawn="true"
+			dir="${tomcat.home}"
+			executable="${tomcat.home}/bin/${tomcat.start.cmd}">
+            <env key="CATALINA_BASE" value="${catalina.base}"/>
+            <env key="CATALINA_HOME" value="${catalina.home}"/>
+            <env key="CATALINA_TMPDIR" value="${catalina.temp}"/>
+            <env key="CATALINA_OPTS" value="-Duser.timezone=GMT -Dfile.encoding=UTF-8 ${coverage.data.file} ${tomcat.debug}"/>
+        </exec>
+        <sleep seconds="20"/>
+    </target>
+
+	<target name="tomcat.stop" depends="tomcat.installed" description="stop local tomcat instance">
+		<if>
+            <os family="windows"/>
+			<then>
+				<property name="tomcat.stop.cmd" value="shutdown.bat"/>
+			</then>
+			<else>
+				<property name="tomcat.stop.cmd" value="shutdown.sh"/>
+			</else>
+		</if>
+
+        <exec
+			spawn="true"
+			dir="${tomcat.home}/bin"
+			executable="${tomcat.home}/bin/${tomcat.stop.cmd}">
+            <env key="CATALINA_BASE" value="${catalina.base}"/>
+            <env key="CATALINA_HOME" value="${catalina.home}"/>
+            <env key="CATALINA_TMPDIR" value="${catalina.temp}"/>
+        </exec>
+        <sleep seconds="20"/>
+	</target>
+
+</project>

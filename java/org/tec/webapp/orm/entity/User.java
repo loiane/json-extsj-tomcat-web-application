@@ -39,11 +39,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.tec.webapp.json.JSONSerializable;
+import org.tec.webapp.bean.RoleType;
+import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.bean.UserRoleBean;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -65,13 +65,13 @@ import java.util.Map;
     uniqueConstraints = {
       @UniqueConstraint(name = "user_name_uc", columnNames = { "user_name" }),
       @UniqueConstraint(name = "enail_uc", columnNames = { "email" }) })
-public class User implements JSONSerializable
+public class User implements JSONSerializable, UserBean
 {
   /** the anonymous user name */
   protected static final String ANON_USER_NAME = "anonymous";
 
   /** the anonymous user */
-  public static final User ANON_USER = new User();
+  public static final UserBean ANON_USER = new User();
 
   /** the json config to filter out password when sending data to client */
   protected static final JsonConfig JSON_CONFIG = new JsonConfig();
@@ -99,7 +99,7 @@ public class User implements JSONSerializable
     {
       public JSONObject processBean(Object bean, JsonConfig jsonConfig)
       {
-        UserRole ur = (UserRole) bean;
+        UserRoleBean ur = (UserRoleBean) bean;
         Map<String, String> m = new HashMap<String, String>();
         m.put("role", ur.getRole().getName());
         m.put("userRoleId", Integer.toString(ur.getUserRoleId()));
@@ -143,110 +143,122 @@ public class User implements JSONSerializable
 
   /** the list of roles assigned to the user */
   // set fetch to not lazy load since it's a small set
-  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = UserRole.class)
   @JoinColumn(name = "user_id")
-  protected List<UserRole> mUserRoles;
+  protected List<UserRoleBean> mUserRoles;
 
   /**
-   * @return the userId
+   * {@inheritDoc}
    */
+  @Override()
   public int getUserId()
   {
     return mUserId;
   }
 
   /**
-   * @param userId the userId to set
+   * {@inheritDoc}
    */
+  @Override()
   public void setUserId(int userId)
   {
     mUserId = userId;
   }
 
   /**
-   * @return the userName
+   * {@inheritDoc}
    */
+  @Override()
   public String getUserName()
   {
     return mUserName;
   }
 
   /**
-   * @param userName the userName to set
+   * {@inheritDoc}
    */
+  @Override()
   public void setUserName(String userName)
   {
     mUserName = userName;
   }
 
   /**
-   * @return the password
+   * {@inheritDoc}
    */
+  @Override()
   public String getPassword()
   {
     return mPassword;
   }
 
   /**
-   * @param password the password to set
+   * {@inheritDoc}
    */
+  @Override()
   public void setPassword(String password)
   {
     mPassword = password;
   }
 
   /**
-   * @return the email
+   * {@inheritDoc}
    */
+  @Override()
   public String getEmail()
   {
     return mEmail;
   }
 
   /**
-   * @param email the email to set
+   * {@inheritDoc}
    */
+  @Override()
   public void setEmail(String email)
   {
     mEmail = email;
   }
 
   /**
-   * @return the enabled
+   * {@inheritDoc}
    */
+  @Override()
   public boolean getEnabled()
   {
     return mEnabled;
   }
 
   /**
-   * @param enabled the enabled to set
+   * {@inheritDoc}
    */
+  @Override()
   public void setEnabled(boolean enabled)
   {
     mEnabled = enabled;
   }
 
   /**
-   * @return the userRoles
+   * {@inheritDoc}
    */
-  public List<UserRole> getUserRoles()
+  @Override()
+  public List<UserRoleBean> getUserRoles()
   {
     return mUserRoles;
   }
 
   /**
-   * @param userRoles the userRoles to set
+   * {@inheritDoc}
    */
-  public void setUserRoles(List<UserRole> userRoles)
+  @Override()
+  public void setUserRoles(List<UserRoleBean> userRoles)
   {
     mUserRoles = userRoles;
   }
 
   /**
-   * whether this is an anonymous user
-   * @return true if user is anonymous
+   * {@inheritDoc}
    */
+  @Override()
   public boolean isAnonymous()
   {
     return mUserName.equals(ANON_USER_NAME);
@@ -304,9 +316,9 @@ public class User implements JSONSerializable
    * @param json the json definition of a user
    * @return the user instance
    */
-  public static User jsonToUser(String json)
+  public static UserBean jsonToUser(String json)
   {
-    User u = (User) JSONObject.toBean(JSONObject.fromObject(json), User.class);
+    UserBean u = (UserBean) JSONObject.toBean(JSONObject.fromObject(json), User.class);
 
     morphUserRoles(u);
 
@@ -323,7 +335,7 @@ public class User implements JSONSerializable
   {
     Collection<User> users = (Collection<User>) JSONArray.toCollection(JSONArray.fromObject(json), User.class);
 
-    for (User u : users)
+    for (UserBean u : users)
     {
       morphUserRoles(u);
     }
@@ -335,9 +347,9 @@ public class User implements JSONSerializable
    * handle collection properties in the top level conversion
    * @param user the user to morph the userRoles
    */
-  protected static void morphUserRoles(User user)
+  protected static void morphUserRoles(UserBean user)
   {
-    List<UserRole> roles = new ArrayList<UserRole>();
+    List<UserRoleBean> roles = new ArrayList<UserRoleBean>();
     for (Object o : user.getUserRoles())
     {
       MorphDynaBean dynaBean = (MorphDynaBean) o;
@@ -348,49 +360,5 @@ public class User implements JSONSerializable
       roles.add(ur);
     }
     user.setUserRoles(roles);
-  }
-
-  /**
-   * get the list of default user from users.json
-   * @return the collection of default users
-   */
-  public static Collection<User> getDefaultUsers()
-  {
-    BufferedReader in = null;
-    try
-    {
-      in = new BufferedReader(
-          new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream("org/tec/webapp/users.json"),
-          StandardCharsets.UTF_8));
-
-//      in = new BufferedReader(new InputStreamReader(new FileInputStream("C:/Users/tcronin/workspace/webapp/conf/WEB-INF/classes/org/tec/webapp/users.json"), StandardCharsets.UTF_8));
-
-      StringBuffer buff = new StringBuffer();
-
-      for (String str = in.readLine(); str != null; str = in.readLine())
-      {
-        buff.append(str);
-      }
-
-      return User.jsonArrayToUsers(buff.toString());
-    }
-    catch (Throwable t)
-    {
-      throw new RuntimeException("failed to init users", t);
-    }
-    finally
-    {
-      if (in != null)
-      {
-        try
-        {
-          in.close();
-        }
-        catch (IOException e)
-        {
-          throw new RuntimeException("failed to close tream", e);
-        }
-      }
-    }
   }
 }

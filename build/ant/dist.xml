@@ -18,9 +18,9 @@
 
 	<!-- TODO: variablize the build type -->
 
-	<target name="dist.checkstyle" depends="common.init" unless="already.checkstyle" description="runs checkstyle rules over java code">
+	<target name="dist.checkstyle" depends="ivy.init" unless="already.checkstyle" description="runs checkstyle rules over java code">
 		<property name="already.checkstyle" value="true" />
-<!--
+<!-- TODO get eclipse and ant in synch
 		<cs:checkstyle config="${basedir}/build/checkstyle/checkstyle.xml">
 
 			<classpath>
@@ -79,19 +79,25 @@
 
         <replace file="${war.temp}/META-INF/context.xml" token="$database.datasource$" value="${database.datasource}"/>
         <replace file="${war.temp}/META-INF/context.xml" token="$database.host$" value="${database.host}"/>
-        <replace file="${war.temp}/META-INF/context.xml" token="$database.host$" value="${database.host}"/>
         <replace file="${war.temp}/META-INF/context.xml" token="$database.port$" value="${database.port}"/>
         <replace file="${war.temp}/META-INF/context.xml" token="$database.name$" value="${database.name}"/>
         <replace file="${war.temp}/META-INF/context.xml" token="$database.username$" value="${database.username}"/>
         <replace file="${war.temp}/META-INF/context.xml" token="$database.password$" value="${database.password}"/>
 
-		<copy file="${basedir}/conf/hibernate.properties.template"
+		<copy file="${basedir}/conf/spring/hibernate/database-config.xml"
+              overwrite="true"
+              force="true"
+              toDir="${war.temp}/WEB-INF/conf"/>
+
+		<copy file="${basedir}/conf/spring/hibernate/hibernate.properties.template"
               overwrite="true"
               force="true"
               tofile="${war.temp}/WEB-INF/conf/hibernate.properties"/>
 
         <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$hibernate.dialect$" value="${hibernate.dialect}"/>
+        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.datasource$" value="${database.datasource}"/>
         <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.url$" value="${database.url}"/>
+        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.test.sql$" value="${database.test.sql}"/>
         <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.driver$" value="${database.driver}"/>
         <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.username$" value="${database.username}"/>
         <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.password$" value="${database.password}"/>

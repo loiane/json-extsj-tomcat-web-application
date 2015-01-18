@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="database" default="database.fail">
+
+	<description>database tasks</description>
+
+	<target name="database.fail">
+		<fail message="Do not execute this file directly.  Use build.xml from project root" />
+	</target>
+
+	<!-- jdbc properties can be overridden from user props file -->
+    <property name="database.driver" value="com.mysql.jdbc.Driver"/>
+    <property name="database.host" value="localhost"/>
+    <property name="database.port" value="3306"/>
+    <property name="database.name" value="webapp"/>
+    <property name="database.username" value="root"/>
+    <property name="database.password" value="root"/>
+    <property name="database.jdbc" value="jdbc:mysql://${database.host}:${database.port}/${database.name}"/>
+
+    <target name="database.drop" depends="ivy.init">
+        <echo message="Dropping '${database.name}' database at ${database.jdbc}"/>
+        <sql
+				driver="${database.driver}"
+                url="jdbc:mysql://${database.host}:${database.port}"
+                userid="${database.username}"
+                password="${database.password}"
+                onerror="continue"
+                classpathref="classpath.ant">
+            DROP DATABASE IF EXISTS ${database.name};
+        </sql>
+    </target>
+
+    <target name="database.create" depends="ivy.init">
+        <echo message="creating '${database.name}' database at ${database.jdbc}"/>
+
+		<sql
+                driver="${database.driver}"
+                url="jdbc:mysql://${database.host}:${database.port}"
+                userid="${database.username}"
+                password="${database.password}"
+                onerror="continue"
+                classpathref="classpath.ant">
+            CREATE DATABASE `${database.name}` /*!40100 DEFAULT CHARACTER SET utf8 */;
+        </sql>
+
+    	<!-- this table is needed for DB deploy -->
+        <sql
+                driver="${database.driver}"
+                url="${database.jdbc}"
+                userid="${database.username}"
+                password="${database.password}"
+                onerror="continue"
+                classpathref="classpath.ivy.ant">
+            /* START: dbdeploy - Change management table */
+            CREATE TABLE `changelog` (
+            `change_number` BIGINT NOT NULL,
+            `complete_dt` TIMESTAMP NOT NULL,
+            `applied_by` VARCHAR(100) NOT NULL,
+            `description` VARCHAR(500) NOT NULL
+            );
+            ALTER TABLE `changelog` ADD CONSTRAINT Pkchangelog PRIMARY KEY (change_number);
+            /* END: dbdeploy - Change management table */
+        </sql>
+
+	</target>
+
+    <target name="database.update" depends="ivy.init" description="Update Database schema">
+		<taskdef name="dbdeploy" classname="com.dbdeploy.AntTarget" classpathref="classpath.ant"/>
+
+        <!-- if you don't specify an output file, dbdeploy will apply the changes for you
+        you may need to specify delimiter and delimitertype for your scripts to be split properly - these
+         work the same as in the ant sql task, see http://ant.apache.org/manual/Tasks/sql.html
+        -->
+       <dbdeploy
+                driver="${database.driver}"
+                url="${database.jdbc}"
+                userid="${database.username}"
+                password="${database.password}"
+                dir="${basedir}/schema/app"
+                dbms="mysql"
+                delimiter=";;"
+                delimitertype="normal"
+                />
+    </target>
+
+	<target name="database.reset" depends="database.drop,database.create,database.update" description="drop and reload development database">
+		<!-- TODO for some reason this will only run once if called from depends, antCall seems to work though -->
+	</target>
+
+</project>

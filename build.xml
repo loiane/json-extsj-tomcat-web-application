@@ -7,11 +7,13 @@
     <import file="${basedir}/build/ant/doc.xml" />
     <import file="${basedir}/build/ant/extjs.xml" />
     <import file="${basedir}/build/ant/ivy-ant.xml" />
+    <import file="${basedir}/build/ant/database.xml" />
+    <import file="${basedir}/build/ant/tomcat.xml" />
 
     <description>extjs json tomcat web application</description>
 
     <target name="default" description="default task">
-        <echo>eEditions pentaho plugins. issue -p to see tasks</echo>
+        <echo>issue -p to see tasks</echo>
     </target>
 
 </project>

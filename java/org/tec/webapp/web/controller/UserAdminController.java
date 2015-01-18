@@ -28,7 +28,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.json.SerializableMap;
 import org.tec.webapp.orm.entity.User;
-import org.tec.webapp.orm.service.UserSvc;
+import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
 import org.tec.webapp.web.WebException;
 import org.tec.webapp.web.model.JSONModelAndView;
@@ -62,7 +63,7 @@ public class UserAdminController
 
     try
     {
-      User currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
+      UserBean currentUser = ControllerUtils.getCurrentUser(session, mUserSvc);
 
       if (mLogger.isDebugEnabled())
       {
