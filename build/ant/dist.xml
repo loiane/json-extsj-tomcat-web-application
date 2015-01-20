@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="dist" default="dist.fail"
-	xmlns:cs="antlib:com.puppycrawl.tools.checkstyle"
-	xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="dist" default="dist.fail" xmlns:cs="antlib:com.puppycrawl.tools.checkstyle">
 
 	<description>distribution tasks</description>
 
@@ -84,29 +82,39 @@
         <replace file="${war.temp}/META-INF/context.xml" token="$database.username$" value="${database.username}"/>
         <replace file="${war.temp}/META-INF/context.xml" token="$database.password$" value="${database.password}"/>
 
-		<copy file="${basedir}/conf/spring/hibernate/database-config.xml"
-              overwrite="true"
-              force="true"
-              toDir="${war.temp}/WEB-INF/conf"/>
+        <if>
+			<equals arg1="${dba.type}" arg2="hibernate"/>
+            <then>
+        		<copy file="${basedir}/conf/spring/hibernate/database-config.xml"
+                      overwrite="true"
+                      force="true"
+                      toDir="${war.temp}/WEB-INF/conf"/>
 
-		<copy file="${basedir}/conf/spring/hibernate/hibernate.properties.template"
-              overwrite="true"
-              force="true"
-              tofile="${war.temp}/WEB-INF/conf/hibernate.properties"/>
+        		<copy file="${basedir}/conf/spring/hibernate/hibernate.properties.template"
+                      overwrite="true"
+                      force="true"
+                      tofile="${war.temp}/WEB-INF/conf/hibernate.properties"/>
 
-        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$hibernate.dialect$" value="${hibernate.dialect}"/>
-        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.datasource$" value="${database.datasource}"/>
-        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.url$" value="${database.url}"/>
-        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.test.sql$" value="${database.test.sql}"/>
-        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.driver$" value="${database.driver}"/>
-        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.username$" value="${database.username}"/>
-        <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.password$" value="${database.password}"/>
+                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$hibernate.dialect$" value="${hibernate.dialect}"/>
+                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.datasource$" value="${database.datasource}"/>
+                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.url$" value="${database.url}"/>
+                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.test.sql$" value="${database.test.sql}"/>
+                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.driver$" value="${database.driver}"/>
+                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.username$" value="${database.username}"/>
+                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.password$" value="${database.password}"/>
+            </then>
+            <else>
+        		<copy file="${basedir}/conf/spring/jdbc/database-config.xml"
+                      overwrite="true"
+                      force="true"
+                      toDir="${war.temp}/WEB-INF/conf"/>
+            </else>
+        </if>
 
 	</target>
 
 	<target name="dist.war" depends="dist.jar,extjs.build.dev,dist.war.init" unless="already.war" description="build eEdtions jar">
 		<property name="already.war" value="true" />
-		<ivy:cachepath pathid="runtime.ivy" conf="runtime"/>
 
 		<war destfile="${war.file}" webxml="${basedir}/conf/WEB-INF/web.xml">
 

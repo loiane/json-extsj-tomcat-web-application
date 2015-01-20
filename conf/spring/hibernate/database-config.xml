@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+   http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+   http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<!-- enable autowiring of beans -->
+	<!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config -->
+	<context:annotation-config />
+
+    <!-- the root package spring will look for annotated controller classes -->
+    <!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-classpath-scanning -->
+    <context:component-scan base-package="org.tec.webapp.orm"/>
+
+	<context:property-placeholder location="/WEB-INF/conf/hibernate.properties"/>
+
+	<!-- Declare the Hibernate SessionFactory for retrieving Hibernate sessions -->
+	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate3/annotation/AnnotationSessionFactoryBean.html -->
+	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/LocalSessionFactoryBuilder.html -->
+	<!-- See https://docs.jboss.org/hibernate/orm/4.1/javadocs/?org/hibernate/SessionFactory.html -->
+	<!-- See https://docs.jboss.org/hibernate/orm/4.1/javadocs/?org/hibernate/Session.html -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan">
+			<list>
+				<value>org.tec.webapp.orm.entity</value>
+				<value>org.tec.webapp.orm.dao.impl</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="current_session_context_class">thread</prop>
+				<prop key="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</prop>
+				<prop key="show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- Declare a datasource that has pooling capabilities -->
+	<!-- see http://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html -->
+	<!-- see https://github.com/brettwooldridge/HikariCP -->
+	<!-- see http://stackoverflow.com/questions/23172643/how-to-set-up-datasource-with-spring-for-hikaricp -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="shutdown">
+        <property name="dataSourceClassName" value="${database.datasource}" />
+        <!-- property name="connectionTestQuery" value="SELECT 1" / -->
+	    <property name="dataSourceProperties">
+	        <props>
+	            <prop key="url">${database.url}</prop>
+	            <prop key="user">${database.username}</prop>
+	            <prop key="password">${database.password}</prop>
+	        </props>
+	    </property>
+	</bean>
+
+	<!-- Declare a hibernate transaction manager -->
+	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/HibernateTransactionManager.html -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- Enable annotation style of managing transactions -->
+	<!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/transaction.html -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+</beans>

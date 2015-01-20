@@ -13,38 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.tec.webapp.bean;
+package org.tec.webapp.jdbc.entity;
+
+import java.util.List;
+
+import org.tec.webapp.bean.UserRoleBean;
 
 /**
- * the role type used for access
+ * user role data access interface
  */
-public enum RoleType
+public interface UserRoleDba
 {
-  /** the admin role */
-  ROLE_ADMIN("ROLE_ADMIN"),
-  /** the user role */
-  ROLE_USER("ROLE_USER"),
-  /** the guest role */
-  ROLE_GUEST("ROLE_GUEST");
+  /**
+   * insert a new userRole
+   * @param userRole the userRole to insert
+   * @return the unique identifier
+   */
+  Long insert(UserRoleBean userRole);
 
   /**
-   * role name
+   * delete a userRole
+   * @param userRole the userRole to delete
    */
-  private final String mRoleName;
+  void delete(UserRoleBean userRole);
 
   /**
-   * @param roleName construct the role name
+   * get the list of roles for a given user
+   * @param userId the current user id to get roles for
+   * @return the list of roles
    */
-  RoleType(final String roleName)
-  {
-    mRoleName = roleName;
-  }
-
-  /**
-   * @return the role name
-   */
-  public String getName()
-  {
-    return mRoleName;
-  }
+  List<UserRoleBean> getRoles(Long userId);
 }

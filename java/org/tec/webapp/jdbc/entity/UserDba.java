@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.tec.webapp.service;
+package org.tec.webapp.jdbc.entity;
 
-import org.tec.webapp.json.SerializableList;
+import java.util.List;
+
 import org.tec.webapp.bean.UserBean;
 
 /**
- * the user service interface
+ * user data access interface
  */
-public interface UserSvc
+public interface UserDba
 {
   /**
    * insert a new user
    * @param user the user to insert
+   * @return the unique identifier
    */
-  void insert(UserBean user);
+  Long insert(UserBean user);
 
   /**
    * update a user
@@ -49,7 +51,7 @@ public interface UserSvc
 
   /**
    * get user by id
-   * @param userName the user name
+   * @param userName the user Sname
    * @return the user for the given name
    */
   UserBean getUser(String userName);
@@ -59,5 +61,5 @@ public interface UserSvc
    * @param userName the current user to exclude from the list
    * @return the list of other users
    */
-  SerializableList<UserBean> getOtherUsers(String userName);
+  List<UserBean> getOtherUsers(String userName);
 }

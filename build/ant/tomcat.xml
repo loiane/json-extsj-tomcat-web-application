@@ -31,14 +31,14 @@
 
 
 		<!-- is brute force file or dir sets don't seem to delete subdirs... -->
-        <delete verbose="true" includeemptydirs="true" quiet="true" dir="${catalina.base}/logs" />
-        <mkdir dir="${catalina.base}/logs" />
-		<delete verbose="true" includeemptydirs="true" quiet="true" dir="{catalina.base}/temp" />
-        <mkdir dir="${catalina.base}/temp" />
-		<delete verbose="true" includeemptydirs="true" quiet="true" dir="${catalina.base}/tmp" />
-        <mkdir dir="${catalina.base}/tmp" />
-		<delete verbose="true" includeemptydirs="true" quiet="true" dir="${catalina.base}/work" />
-        <mkdir dir="${catalina.base}/work" />
+        <delete verbose="true" includeemptydirs="true" quiet="true" dir="${tomcat.home}/logs" />
+        <mkdir dir="${tomcat.home}/logs" />
+		<delete verbose="true" includeemptydirs="true" quiet="true" dir="{tomcat.home}/temp" />
+        <mkdir dir="${tomcat.home}/temp" />
+		<delete verbose="true" includeemptydirs="true" quiet="true" dir="${tomcat.home}/tmp" />
+        <mkdir dir="${tomcat.home}/tmp" />
+		<delete verbose="true" includeemptydirs="true" quiet="true" dir="${tomcat.home}/work" />
+        <mkdir dir="${tomcat.home}/work" />
 
 	</target>
 
@@ -57,7 +57,7 @@
 			spawn="true"
 			dir="${tomcat.home}"
 			executable="${tomcat.home}/bin/${tomcat.start.cmd}">
-            <env key="CATALINA_BASE" value="${catalina.base}"/>
+            <env key="CATALINA_BASE" value="${tomcat.home}"/>
             <env key="CATALINA_HOME" value="${catalina.home}"/>
             <env key="CATALINA_TMPDIR" value="${catalina.temp}"/>
             <env key="CATALINA_OPTS" value="-Duser.timezone=GMT -Dfile.encoding=UTF-8 ${coverage.data.file} ${tomcat.debug}"/>
@@ -80,7 +80,7 @@
 			spawn="true"
 			dir="${tomcat.home}/bin"
 			executable="${tomcat.home}/bin/${tomcat.stop.cmd}">
-            <env key="CATALINA_BASE" value="${catalina.base}"/>
+            <env key="CATALINA_BASE" value="${tomcat.home}"/>
             <env key="CATALINA_HOME" value="${catalina.home}"/>
             <env key="CATALINA_TMPDIR" value="${catalina.temp}"/>
         </exec>

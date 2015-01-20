@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="common" default="common.fail" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="common" default="common.fail">
 
     <description>common tasks</description>
 
 	<target name="common.fail">
         <fail message="Do not execute this file directly.  Use build.xml from project root" />
     </target>
+
+	<!-- conditional ant utils assumes jar in ant.home/lib -->
+	<!-- @see http://ant-contrib.sourceforge.net/tasks/ -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml" />
 
     <!-- custom overrides -->
     <property file="${user.home}/webapp.properties" />

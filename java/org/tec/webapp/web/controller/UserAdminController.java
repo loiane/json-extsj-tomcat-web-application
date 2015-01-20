@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.json.SerializableMap;
-import org.tec.webapp.orm.entity.User;
 import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
@@ -70,7 +69,7 @@ public class UserAdminController
         mLogger.debug("get users for " + currentUser.getUserName());
       }
 
-      SerializableMap<String, SerializableList<User>> smap = new SerializableMap<String, SerializableList<User>>();
+      SerializableMap<String, SerializableList<UserBean>> smap = new SerializableMap<String, SerializableList<UserBean>>();
 
       smap.put("users", mUserSvc.getOtherUsers(currentUser.getUserName()));
 

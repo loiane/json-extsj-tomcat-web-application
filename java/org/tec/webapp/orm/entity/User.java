@@ -94,6 +94,7 @@ public class User implements JSONSerializable, UserBean
         return filter;
       }
     });
+
     /** special processing for generic list */
     JSON_CONFIG.registerJsonBeanProcessor(UserRole.class, new JsonBeanProcessor()
     {
@@ -147,126 +148,98 @@ public class User implements JSONSerializable, UserBean
   @JoinColumn(name = "user_id")
   protected List<UserRoleBean> mUserRoles;
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public int getUserId()
   {
     return mUserId;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public void setUserId(int userId)
   {
     mUserId = userId;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public String getUserName()
   {
     return mUserName;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public void setUserName(String userName)
   {
     mUserName = userName;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public String getPassword()
   {
     return mPassword;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public void setPassword(String password)
   {
     mPassword = password;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public String getEmail()
   {
     return mEmail;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public void setEmail(String email)
   {
     mEmail = email;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public boolean getEnabled()
   {
     return mEnabled;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public void setEnabled(boolean enabled)
   {
     mEnabled = enabled;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public List<UserRoleBean> getUserRoles()
   {
     return mUserRoles;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public void setUserRoles(List<UserRoleBean> userRoles)
   {
     mUserRoles = userRoles;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public boolean isAnonymous()
   {
     return mUserName.equals(ANON_USER_NAME);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public String toString()
   {
@@ -278,9 +251,7 @@ public class User implements JSONSerializable, UserBean
         .append("mUserRoles", mUserRoles).toString();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override()
   public String toJSON()
   {
@@ -355,7 +326,7 @@ public class User implements JSONSerializable, UserBean
       MorphDynaBean dynaBean = (MorphDynaBean) o;
       UserRole ur = new UserRole();
       ur.setUser(user);
-      ur.setRole(RoleType.fromName((String) dynaBean.get("role")));
+      ur.setRole(RoleType.valueOf((String) dynaBean.get("role")));
       ur.setUserRoleId(Integer.parseInt((String) dynaBean.get("userRoleId")));
       roles.add(ur);
     }

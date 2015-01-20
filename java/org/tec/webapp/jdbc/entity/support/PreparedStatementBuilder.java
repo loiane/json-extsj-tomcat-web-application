@@ -32,6 +32,7 @@ import java.util.Set;
  */
 public class PreparedStatementBuilder implements PreparedStatementCreator, SqlProvider
 {
+
   /** the logger */
   protected Log mLogger = LogFactory.getLog(this.getClass());
 
@@ -46,6 +47,9 @@ public class PreparedStatementBuilder implements PreparedStatementCreator, SqlPr
    */
   private static final String[] CORRECT_TEXT_CHARS = new String[]
   {"'", "'", "'", "'", "'", "'", "\"", "\"", "\"", "\"", "\"", "\"", "\"", "\"", "\"", "\""};
+
+  /** delete statement prefix */
+  protected static final String DELETE_FROM_PREFIX = "DELETE FROM ";
 
   /** the sql string */
   protected String mSql;
@@ -119,7 +123,7 @@ public class PreparedStatementBuilder implements PreparedStatementCreator, SqlPr
     // set where parameters
     if (mWhereParams != null)
     {
-      for (Parameter value : mParams.values())
+      for (Parameter value : mWhereParams.values())
       {
         setParameter(stmt, i, value);
         ++i;
@@ -153,61 +157,44 @@ public class PreparedStatementBuilder implements PreparedStatementCreator, SqlPr
             break;
           case DATE :
             /*
-            java.sql.Date date = TextHelper.parseDate(param.getData());
-            if (null == date)
-            {
-              throw new SQLException("failed to set parameter: stmt=" + stmt + " index=" + index + " param=" + param);
-            }
-            stmt.setDate(index, date);
-            */
+             * java.sql.Date date = TextHelper.parseDate(param.getData()); if
+             * (null == date) { throw new
+             * SQLException("failed to set parameter: stmt=" + stmt + " index="
+             * + index + " param=" + param); } stmt.setDate(index, date);
+             */
             break;
           case TIME :
             /*
-            Time time = TextHelper.parseTime(param.getData());
-            if (null == time)
-            {
-              throw new SQLException("failed to set parameter: stmt=" + stmt + " index=" + index + " param=" + param);
-            }
-            stmt.setTime(index, time);
-            */
+             * Time time = TextHelper.parseTime(param.getData()); if (null ==
+             * time) { throw new SQLException("failed to set parameter: stmt=" +
+             * stmt + " index=" + index + " param=" + param); }
+             * stmt.setTime(index, time);
+             */
             break;
           case TIMESTAMP :
             /*
-            Timestamp ts = TextHelper.parseTimestamp(param.getData());
-            if (null == ts)
-            {
-              throw new SQLException("failed to set parameter: stmt=" + stmt + " index=" + index + " param=" + param);
-            }
-            stmt.setTimestamp(index, ts);
-            */
+             * Timestamp ts = TextHelper.parseTimestamp(param.getData()); if
+             * (null == ts) { throw new
+             * SQLException("failed to set parameter: stmt=" + stmt + " index="
+             * + index + " param=" + param); } stmt.setTimestamp(index, ts);
+             */
             break;
-            /*
-          case ParamType.TIME_HHMM :
-            Time hhmm = TextHelper.parseTimeHHMM(param.getData());
-            if (null == hhmm)
+          case INTEGER :
+            if (param.getData() instanceof Long)
             {
-              throw new SQLException("failed to set parameter: stmt=" + stmt + " index=" + index + " param=" + param);
+              Long l = (Long) param.getData();
+              stmt.setLong(index, l);
             }
-            stmt.setTime(index, hhmm);
+            else
+            {
+              Integer i = (Integer) param.getData();
+              stmt.setInt(index, i);
+            }
             break;
-            */
           case FLOAT :
             Float f = (Float) param.getData();
-            if (null == f)
-            {
-              throw new RuntimeException("failed to set parameter: stmt=" + stmt + " index=" + index + " param=" + param);
-            }
             stmt.setFloat(index, f);
             break;
-            /*
-          case ParamType.EMAIL :
-            stmt.setString(index, EmailHelper.cleanEmail(param.getData()));
-            break;
-          case ParamType.TRIM_STRING :
-            String trim = StringUtils.replaceEachRepeatedly(param.getData(), INVALID_TEXT_CHARS, CORRECT_TEXT_CHARS);
-            stmt.setString(index, StringUtils.trim(StringUtils.substring(trim, 0, param.getMaxLength())));
-            break;
-            */
           default : // set string for non explicit types
             String tmp = StringUtils.replaceEachRepeatedly((String) param.getData(), INVALID_TEXT_CHARS, CORRECT_TEXT_CHARS);
             stmt.setString(index, tmp);
@@ -215,7 +202,7 @@ public class PreparedStatementBuilder implements PreparedStatementCreator, SqlPr
         }
       }
     }
-    catch (SQLException e)
+    catch (Throwable e)
     {
       throw new RuntimeException("failed to process parameter " + param, e);
     }
@@ -328,7 +315,6 @@ public class PreparedStatementBuilder implements PreparedStatementCreator, SqlPr
     buf.append(" SET ");
 
     // Build both column names and ?s
-
     for (Iterator<String> itCol = params.keySet().iterator(); itCol.hasNext();)
     {
       String key = itCol.next();
@@ -346,6 +332,57 @@ public class PreparedStatementBuilder implements PreparedStatementCreator, SqlPr
     }
 
     return new PreparedStatementBuilder(buf.toString(), params, whereParams, 0);
+  }
+
+  /**
+   * Build prepared delete statement
+   *
+   * @param tablename the table to update
+   * @param whereParams the map of where params
+   * @return PreparedStatementBuilder to update
+   */
+  public static PreparedStatementBuilder getDeleteBuilder(String tablename, ParameterMap whereParams)
+  {
+    StringBuilder whereBuf = new StringBuilder();
+    if (whereParams != null && whereParams.size() > 0)
+    {
+      for (Iterator<String> itCol = whereParams.keySet().iterator(); itCol.hasNext();)
+      {
+        String key = itCol.next();
+        whereBuf.append(key);
+        whereBuf.append("=?");
+        if (itCol.hasNext())
+        {
+          whereBuf.append(" AND ");
+        }
+      }
+    }
+
+    return getDeleteBuilder(tablename, whereParams, whereBuf.toString());
+  }
+
+  /**
+   * Build delete prepared statement based on
+   *
+   * @param tablename the table to update
+   * @param whereParams the map of where params
+   * @param whereClause the string where clause
+   * @return PreparedStatementBuilder to update
+   */
+  public static PreparedStatementBuilder getDeleteBuilder(String tablename, ParameterMap whereParams, String whereClause)
+  {
+
+    // Build the actual prepared statement
+    StringBuilder buf = new StringBuilder();
+    buf.append("DELETE FROM ");
+    buf.append(tablename);
+
+    if (whereClause != null && whereClause.length() > 0)
+    {
+      buf.append(" WHERE ").append(whereClause);
+    }
+
+    return new PreparedStatementBuilder(buf.toString(), null, whereParams, 0);
   }
 
   /**

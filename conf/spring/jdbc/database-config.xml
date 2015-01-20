@@ -31,13 +31,13 @@
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/datasource/DataSourceTransactionManager.html -->
     <bean id="transactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="oeDataSource" />
+        <property name="dataSource" ref="dataSource" />
     </bean>
 
 	<!-- jdbc template for jdbc operations -->
 	<!-- @see http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html -->
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-        <property name="dataSource" ref="oeDataSource"></property>
+        <property name="dataSource" ref="dataSource"></property>
     </bean>
 
 	<!-- Enable annotation style of managing transactions -->

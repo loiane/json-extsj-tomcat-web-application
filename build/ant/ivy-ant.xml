@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--
+Ivy related tasks assumes ivy jar is in ant.home/lib
+@see http://ant.apache.org/ivy/
+uses namespace for task init
+@see http://ant.apache.org/ivy/history/2.2.0/ant.html
+-->
 <project name="ivy" default="ivy.fail" xmlns:ivy="antlib:org.apache.ivy.ant">
 
     <description>ivy tasks</description>
@@ -17,7 +22,11 @@
 
     	<ivy:cachepath pathid="classpath.compile.ivy" conf="compile, tomcat"/>
 
+		<ivy:cachepath pathid="runtime.ivy" conf="runtime"/>
+
       	<ivy:cachepath pathid="classpath.ant.ivy" conf="ant"/>
+
+      	<ivy:cachepath pathid="classpath.test.ivy" conf="test"/>
 
     	<!-- build compile classpath -->
     	<path id="classpath.compile">
@@ -27,6 +36,10 @@
     	<!-- build ant classpath -->
     	<path id="classpath.ant">
     		<path refid="classpath.ant.ivy"/>
+    	</path>
+
+    	<path id="classpath.test">
+    		<path refid="classpath.test.ivy"/>
     	</path>
     </target>
 
@@ -42,6 +55,15 @@
 
         <ivy:retrieve
                 pattern="${ivy.report.dir}/lib/[conf]/[artifact]-[revision](-[classifier]).[ext]" />
+    </target>
+
+    <target name="ivy.src" depends="ivy.init" description="get source jars for dependencies">
+        <delete dir="${ivy.report.dir}" />
+        <mkdir dir="${ivy.report.dir}" />
+
+        <ivy:retrieve
+        	type="source"
+        	pattern="${ivy.report.dir}/src/[conf]/[artifact]-[revision](-[classifier]).[ext]" />
     </target>
 
 </project>

@@ -15,59 +15,179 @@
  ******************************************************************************/
 package org.tec.webapp.jdbc.entity.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.List;
+
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.stereotype.Component;
+import org.tec.security.Checksum;
 import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.jdbc.bean.User;
 import org.tec.webapp.jdbc.entity.BaseEntity;
+import org.tec.webapp.jdbc.entity.UserDba;
+import org.tec.webapp.jdbc.entity.support.ParameterMap;
+import org.tec.webapp.jdbc.entity.support.PreparedStatementBuilder;
 
 /**
- * the user entity DB access impl
+ * the user entity jdbc access impl
  */
-public class UserDbaImpl extends BaseEntity
+@Component()
+public class UserDbaImpl extends BaseEntity implements UserDba
 {
+  /** Table name */
+  protected static final String TABLE = "users";
 
-  /**
-   * {@inheritDoc}
-   */
-  public void insert(UserBean user)
+  /** the column user_name */
+  protected static final String COLUMN_USER_NAME = "user_name";
+
+  /** the column user_id */
+  protected static final String COLUMN_USER_ID = "user_id";
+
+  /** the column password */
+  protected static final String COLUMN_PASSWORD = "password";
+
+  /** the column enabled */
+  protected static final String COLUMN_ENABLED = "enabled";
+
+  /** the column email */
+  protected static final String COLUMN_EMAIL = "email";
+
+  /** {@inheritDoc} */
+  public Long insert(UserBean user) throws DataAccessException
   {
+    ParameterMap params = getParams(user);
+
+    PreparedStatementCreator creator = PreparedStatementBuilder
+            .getInsertBuilder(TABLE, params, Statement.RETURN_GENERATED_KEYS);
+
+    return insert(creator);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void update(UserBean user)
   {
+    ParameterMap params = getParams(user);
+
+    ParameterMap whereParams = new ParameterMap();
+
+    whereParams.put(COLUMN_USER_ID, user.getUserId());
+
+    PreparedStatementCreator creator = PreparedStatementBuilder
+            .getUpdateBuilder(TABLE, params, whereParams);
+
+    update(creator);
   }
 
   /**
-   * {@inheritDoc}
-   * This function is needed because we need to exclude the password
-   * from the standard user operations.
+   * {@inheritDoc} This function is needed because we need to exclude the
+   * password from the standard user operations.
    */
   public void updatePassword(UserBean user)
   {
+    ParameterMap params = new ParameterMap();
+
+    //Assumes md5 calc
+    params.put(COLUMN_PASSWORD, user.getPassword(), Types.VARCHAR);
+
+    ParameterMap whereParams = new ParameterMap();
+
+    whereParams.put(COLUMN_USER_ID, user.getUserId());
+
+    PreparedStatementCreator creator = PreparedStatementBuilder
+            .getUpdateBuilder(TABLE, params, whereParams);
+
+    update(creator);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void delete(UserBean user)
   {
+    ParameterMap whereParams = new ParameterMap();
+
+    whereParams.put(COLUMN_USER_ID, user.getUserId());
+
+    PreparedStatementCreator creator = PreparedStatementBuilder
+        .getDeleteBuilder(TABLE, whereParams);
+
+    delete(creator);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public UserBean getUser(String userName)
   {
-    return null;
+    ParameterMap whereParams = new ParameterMap();
+
+    whereParams.put(COLUMN_USER_NAME, userName);
+
+    PreparedStatementCreator creator = PreparedStatementBuilder
+            .getSelectBuilder(TABLE, WILDCARD_COLUMN, whereParams);
+
+    List<UserBean> l = (List<UserBean>) query(creator);
+
+
+    return (l != null) ? l.get(0) : null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public List<UserBean> getOtherUsers(String userName)
   {
-    return (List<UserBean>)  null;
+    ParameterMap whereParams = new ParameterMap();
+
+    whereParams.put(COLUMN_USER_NAME, userName);
+
+    StringBuilder buff = new StringBuilder();
+
+    buff.append(COLUMN_USER_NAME);
+    buff.append(" <> ?");
+
+    PreparedStatementCreator creator = PreparedStatementBuilder
+            .getSelectBuilder(TABLE, WILDCARD_COLUMN, whereParams, buff.toString());
+
+    return (List<UserBean>) query(creator);
+  }
+
+  /** {@inheritDoc} */
+  @Override()
+  protected UserBean process(ResultSet rs) throws SQLException
+  {
+    UserBean user = new User();
+
+    user.setUserId(rs.getInt(COLUMN_USER_ID));
+    user.setUserName(rs.getString(COLUMN_USER_NAME));
+    //TODO this shouldn't make it passed the server
+    user.setPassword(rs.getString(COLUMN_PASSWORD));
+    user.setEnabled(rs.getBoolean(COLUMN_ENABLED));
+    user.setEmail(rs.getString(COLUMN_EMAIL));
+
+    return user;
+  }
+
+  /** {@inheritDoc} */
+  @Override()
+  protected ParameterMap getParams(Object bean)
+  {
+    UserBean user = (UserBean) bean;
+    ParameterMap params = new ParameterMap();
+
+    if (user.getUserId() > 0)
+    {
+      params.put(COLUMN_USER_ID, user.getUserId());
+    }
+    params.put(COLUMN_EMAIL, user.getEmail());
+    params.put(COLUMN_USER_NAME, user.getUserName());
+    params.put(COLUMN_ENABLED, user.getEnabled());
+
+    //set init pwd to md5 of user name
+    //don't set on update, use explicit pwd update function
+    if (user.getUserId() == 0)
+    {
+      params.put(COLUMN_PASSWORD, Checksum.getMD5(user.getUserName()));
+    }
+
+    return params;
   }
 }

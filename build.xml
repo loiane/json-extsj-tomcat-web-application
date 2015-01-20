@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project name="json-ext-spring-webapp" basedir="." default="default"  xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="json-ext-spring-webapp" basedir="." default="default">
 
 	<import file="${basedir}/build/ant/common.xml" />
     <import file="${basedir}/build/ant/dist.xml" />
@@ -9,6 +9,7 @@
     <import file="${basedir}/build/ant/ivy-ant.xml" />
     <import file="${basedir}/build/ant/database.xml" />
     <import file="${basedir}/build/ant/tomcat.xml" />
+    <import file="${basedir}/build/ant/test.xml" />
 
     <description>extjs json tomcat web application</description>
 

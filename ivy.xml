@@ -64,7 +64,7 @@
         </dependency>
 
         <!-- servlet lib not to be deployed to webapp -->
-        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1"  conf="tomcat->default"/>
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1"  conf="test, tomcat->default"/>
 
         <dependency org="org.hibernate" name="hibernate-core" rev="4.3.8.Final" conf="compile->default">
             <exclude module="xml-apis" />
@@ -112,7 +112,15 @@
         <dependency org="org.springframework" name="spring-orm" rev="4.1.4.RELEASE" conf="runtime->default"/>
 
         <!-- build -->
+        <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3" conf="ant->default">
+            <exclude org="ant"/>
+        </dependency>
 		<dependency org="com.dbdeploy" name="dbdeploy-ant" rev="3.0M3" conf="ant->default"/>
+
+        <!-- test -->
+        <dependency org="junit" name="junit" rev="4.12" conf="test->default" />
+		<dependency org="org.springframework" name="spring-test" rev="4.1.4.RELEASE" conf="test->default"/>
+        <dependency org="simple-jndi" name="simple-jndi" rev="0.11.4.1" conf="test->default"/>
 
     </dependencies>
 </ivy-module>

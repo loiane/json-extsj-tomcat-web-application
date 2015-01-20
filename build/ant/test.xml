@@ -1,0 +1,101 @@
+<project name="test" default="test.fail">
+
+    <description>test tasks</description>
+
+	<target name="test.fail">
+        <fail message="Do not execute this file directly.  Use build.xml from project root" />
+    </target>
+
+    <property name="test.src.dir" value="${basedir}/test" />
+    <property name="test.root" value="${build.temp}/test" />
+    <property name="test.class.root" value="${test.root}/classes" />
+    <property name="junit.report.dir" value="${report.dir}/junit" />
+
+    <target name="test.init" depends="ivy.init">
+		<mkdir dir="${test.root}/jndi" />
+
+		<copy file="${basedir}/build/test/jndi/jdbc.properties.template" tofile="${test.root}/jndi/jdbc.properties"/>
+
+        <replace file="${test.root}/jndi/jdbc.properties" token="$database.host$" value="${database.host}"/>
+        <replace file="${test.root}/jndi/jdbc.properties" token="$database.port$" value="${database.port}"/>
+        <replace file="${test.root}/jndi/jdbc.properties" token="$database.name$" value="${database.name}"/>
+        <replace file="${test.root}/jndi/jdbc.properties" token="$database.username$" value="${database.username}"/>
+        <replace file="${test.root}/jndi/jdbc.properties" token="$database.password$" value="${database.password}"/>
+    </target>
+
+	<target name="test.compile" depends="test.init, dist.compile">
+		<delete dir="${test.class.root}" quiet="true"/>
+		<mkdir dir="${test.class.root}" />
+
+		<path id="classpath.test.compile">
+			<path refid="classpath.test" />
+			<pathelement path="${build.temp}/classes" />
+		</path>
+
+		<javac srcdir="${test.src.dir}"
+			destdir="${test.class.root}"
+			classpathref="classpath.test.compile"
+			deprecation="${show.deprecation}"
+			debug="on"
+			source="1.8" target="1.8"
+			includeAntRuntime="off">
+		</javac>
+	</target>
+
+	<target name="test.junit" depends="database.reset, test.compile" description="runs unit tests">
+		<mkdir dir="${junit.report.dir}/report" />
+
+		<path id="classpath.test.junit">
+			<path refid="classpath.test.compile" />
+			<pathelement path="${test.class.root}" />
+		</path>
+
+        <junit
+			fork="true"
+			forkmode="once"
+			printsummary="true"
+			haltonfailure="false"
+			showoutput="${test.show.output}"
+            tempdir="${java.io.tmpdir}"
+			failureproperty="test.junit.fail">
+            <classpath refid="classpath.test.junit"/>
+
+			<!-- jndi configuration -->
+			<jvmarg value="-Djava.naming.factory.initial=org.osjava.sj.SimpleContextFactory"/>
+			<jvmarg value="-Dorg.osjava.sj.root=${test.root}/jndi"/>
+            <jvmarg value="-Dorg.osjava.sj.delimiter=/"/>
+            <!-- emulate tomcat jndi config -->
+            <jvmarg value="-Dorg.osjava.sj.space=java:/comp/env"/>
+			<!-- enforce file encoding for consistent testing -->
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+			<!-- remote debugging hook -->
+			<jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${test.debug.suspend},address=${test.debug.port}"/>
+
+			<!-- capture stdout and send to log file -->
+            <formatter type="plain" usefile="true" extension=".log"/>
+            <formatter type="xml" usefile="true"/>
+
+			<!-- handle single test class and complete test suite -->
+            <batchtest if="oeserver.test.target" todir="${junit.report.dir}">
+                <fileset dir="${basedir}/test">
+                    <include name="**/${test.target}.java"/>
+                </fileset>
+            </batchtest>
+            <batchtest unless="test.target" todir="${junit.report.dir}">
+                <fileset dir="${basedir}/test">
+                    <include name="**/Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+
+		<junitreport todir="${junit.report.dir}/report">
+		  <fileset dir="${junit.report.dir}">
+			<include name="TEST-*.xml"/>
+		  </fileset>
+		  <report format="frames" todir="${junit.report.dir}/report/html"/>
+		</junitreport>
+
+    	<fail if="test.junit.fail" message="unit tests failed, see ${junit.report.dir}/report/html/index.html"/>
+	</target>
+
+</project>

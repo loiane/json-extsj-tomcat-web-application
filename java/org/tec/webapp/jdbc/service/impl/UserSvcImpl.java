@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package org.tec.webapp.orm.service.impl;
+package org.tec.webapp.jdbc.service.impl;
 
 import javax.transaction.Transactional;
 
@@ -21,8 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tec.webapp.jdbc.entity.UserDba;
 import org.tec.webapp.json.SerializableList;
-import org.tec.webapp.orm.dao.UserDao;
 import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.service.UserSvc;
 
@@ -41,7 +41,7 @@ public class UserSvcImpl implements UserSvc
 
   /** the user data access object */
   @Autowired()
-  protected UserDao mUserDao;
+  protected UserDba mUserDba;
 
   /**
    * {@inheritDoc}
@@ -50,7 +50,7 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void insert(UserBean user)
   {
-    mUserDao.insert(user);
+    mUserDba.insert(user);
   }
 
   /**
@@ -60,7 +60,7 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void update(UserBean user)
   {
-    mUserDao.update(user);
+    mUserDba.update(user);
   }
 
   /**
@@ -70,7 +70,7 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void updatePassword(UserBean user)
   {
-    mUserDao.updatePassword(user);
+    mUserDba.updatePassword(user);
   }
   /**
    * {@inheritDoc}
@@ -79,7 +79,7 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void delete(UserBean user)
   {
-    mUserDao.delete(user);
+    mUserDba.delete(user);
   }
 
   /**
@@ -89,7 +89,7 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public UserBean getUser(String userName)
   {
-    return mUserDao.getUser(userName);
+    return mUserDba.getUser(userName);
   }
 
   /**
@@ -101,7 +101,7 @@ public class UserSvcImpl implements UserSvc
   {
     SerializableList<UserBean> userList = new SerializableList<UserBean>();
 
-    userList.addAll(mUserDao.getOtherUsers(userName));
+    userList.addAll(mUserDba.getOtherUsers(userName));
 
     return userList;
   }
