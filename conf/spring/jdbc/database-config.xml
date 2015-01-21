@@ -20,7 +20,7 @@
     <!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-classpath-scanning -->
     <context:component-scan base-package="org.tec.webapp.jdbc"/>
 
-    <!-- JNDI datasource comming from META-INF/ -->
+    <!-- JNDI datasource coming from META-INF/ -->
 	<!-- http://stackoverflow.com/questions/9183321/how-to-use-jndi-datasource-provided-by-tomcat-in-spring -->
 	<!-- http://tomcat.apache.org/tomcat-7.0-doc/jndi-resources-howto.html -->
 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
@@ -28,6 +28,7 @@
     </bean>
 
 	<!-- Declare a jdbc transaction manager -->
+	<!-- for programmatic example @see http://simplespringtutorial.com/springProgrammaticTransactions.html -->
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jdbc/datasource/DataSourceTransactionManager.html -->
     <bean id="transactionManager"
           class="org.springframework.jdbc.datasource.DataSourceTransactionManager">

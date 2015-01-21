@@ -21,14 +21,17 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.tec.webapp.bean.RoleType;
 import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.bean.UserRoleBean;
 import org.tec.webapp.jdbc.bean.User;
 import org.tec.webapp.jdbc.bean.UserRole;
-
 
 /**
  * user role test class
@@ -39,6 +42,10 @@ import org.tec.webapp.jdbc.bean.UserRole;
     "file:conf/spring/jdbc/database-config.xml"})
 public class TestUserRole
 {
+  /** get context to test programmatic transactions */
+  @Autowired()
+  protected ApplicationContext mAppContext;
+
   /** the user data access object */
   @Autowired()
   protected UserDba mUserDba;
@@ -59,7 +66,7 @@ public class TestUserRole
 
     List<UserRoleBean> l = mUserRoleDba.getRoles(new Long(userRole.getUser().getUserId()));
 
-    Assert.assertNull("should be at least 1 role", l);
+    Assert.assertNull("should be no roles for " + userRole.getUser(), l);
   }
 
   /**
@@ -68,30 +75,44 @@ public class TestUserRole
    */
   protected UserRoleBean testUserRole()
   {
-    UserBean user = new User();
+    DataSourceTransactionManager tmgr = (DataSourceTransactionManager) mAppContext.getBean("transactionManager");
 
-    user.setUserName("junit");
-    user.setEmail("junit@test.null");
+    TransactionStatus tranStat = tmgr.getTransaction(new DefaultTransactionDefinition());
 
-    Long userId = mUserDba.insert(user);
-    Assert.assertTrue("id is foobared", userId > 0);
+    try
+    {
+      UserBean user = new User();
 
-    user.setUserId(userId.intValue());
+      user.setUserName("junit");
+      user.setEmail("junit@test.null");
 
-    UserRoleBean roleBean = new UserRole();
+      Long userId = mUserDba.insert(user);
+      Assert.assertTrue("id is foobared", userId > 0);
 
-    roleBean.setUser(user);
+      user.setUserId(userId.intValue());
 
-    roleBean.setRole(RoleType.ROLE_GUEST);
+      UserRoleBean roleBean = new UserRole();
 
-    Long id = mUserRoleDba.insert(roleBean);
+      roleBean.setUser(user);
 
-    roleBean.setUserRoleId(id.intValue());
+      roleBean.setRole(RoleType.ROLE_GUEST);
 
-    List<UserRoleBean> l = mUserRoleDba.getRoles(new Long(user.getUserId()));
+      Long id = mUserRoleDba.insert(roleBean);
 
-    Assert.assertTrue("should be at least 1 role", l.size() > 0);
+      roleBean.setUserRoleId(id.intValue());
 
-    return roleBean;
+      List<UserRoleBean> l = mUserRoleDba.getRoles(new Long(user.getUserId()));
+
+      Assert.assertTrue("should be at least 1 role", l.size() > 0);
+
+      tmgr.commit(tranStat);
+
+      return roleBean;
+    }
+    catch (Throwable t)
+    {
+      tmgr.rollback(tranStat);
+      throw new RuntimeException("failed to create user role", t);
+    }
   }
 }

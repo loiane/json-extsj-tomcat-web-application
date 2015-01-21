@@ -18,13 +18,14 @@
     -->
 
 	<!--
-	OE staging pool
+	main database pool
 	@see http://www.javafind.net/gate.jsp?q=/library/16/mysql-connector-java-5.1.29/apidocs/com/mysql/jdbc/jdbc2/optional/MysqlDataSource.html
 	@see http://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html
 	@see https://github.com/brettwooldridge/HikariCP
 	TODO values should be tooled better
 	-->
    <Resource
+   			closeMethod="shutdown"
             auth="Container"
             type="javax.sql.DataSource"
             name="jdbc/database"
