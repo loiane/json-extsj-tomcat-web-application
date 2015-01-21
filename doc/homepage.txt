@@ -1,0 +1,45 @@
+This app is a skeleton app of a web application using spring, hibernate, and extjs.
+The goal of the app is to provide a reference/learning example of a java base web application.
+
+the following third party applications are used:
+
+ * [http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html JDK 8]
+ * [http://tomcat.apache.org/ Apache Tomcat (7)]
+ * [http://www.sencha.com/products/extjs/ Sencha Extjs (4.2.x)]
+ * [http://www.mysql.com/ Mysql 5.5]
+
+the following java third party libraries controlled via [https://ant.apache.org/ivy/ ivy]:
+
+ * [http://docs.oracle.com/javase/7/docs/api/ java API]
+ * [http://docs.oracle.com/javaee/7/api/ j2ee servlet API]
+ * [https://commons.apache.org/proper/commons-lang/javadocs/api-2.6/ Apache commons lang]
+ * [http://commons.apache.org/proper/commons-logging/apidocs/ Apache commons logging]
+ * [http://json-lib.sourceforge.net/apidocs/jdk15/ JSON lib]
+ * [http://projects.spring.io/spring-framework/ Spring Framework]
+ * [http://projects.spring.io/spring-security/ Spring Security]
+ * [http://hibernate.org/ Hibernate]
+ * [https://github.com/brettwooldridge/HikariCP HikariCP Connection pool]
+
+The following are build and infrastructure tools used for this project:
+
+ * [https://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/keplersr2 Eclipse IDE for Java EE Developers]
+ * [http://ant.apache.org/ivy/ivyde/ Ivy eclipse plugin]
+ * [https://marketplace.eclipse.org/content/extjs-jsdt-integration extjs jsdt plugin]
+ * [http://eclipse-cs.sourceforge.net/ Checkstyle eclipse plugin]
+ * [http://ant.apache.org/ Apache ANT]
+ * [http://ant-contrib.sourceforge.net/ ANT contrib]
+ * [https://ant.apache.org/ivy/ Apache IVY]
+ * [http://dbdeploy.com/ dbdeploy]
+ * [http://junit.org/ junit]
+ * [http://checkstyle.sourceforge.net/ Checkstyle]
+ * [http://www.sencha.com/products/sencha-cmd/download Sench CMD build tool (4.x)]
+ * [http://rubyinstaller.org/downloads/ ruby windows installer (pre 3.0)]
+
+TODO:
+ * get user manger tab working to display all data (roles are not loading) and persist changes
+ * have both Hibernate and Spring JDBC DBO layer (jdbc to use programmatic transactions)
+ * abstract extjs source code location to eliminate need for static check in.
+ * add [http://pmd.sourceforge.net/ PMD] and [http://findbugs.sourceforge.net/ findbugs]
+ * get eclipse checkstyle and ant configs in synch
+ * add complete range of unit tests and [http://cobertura.github.io/cobertura/ cobertura]
+ * add [http://jenkins-ci.org/ jenkins] setup for CI
