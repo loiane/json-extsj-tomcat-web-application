@@ -8,6 +8,10 @@
         <fail message="Do not execute this file directly.  Use build.xml from project root" />
     </target>
 
+    <property name="jshint.file" value="${basedir}/build/jshint/jshint-rhino.js" />
+    <property name="jshint.flags" value="browser=true,maxerr=25,undef=true,curly=false,laxbreak=true,debug=true,eqeqeq=true,immed=true,onevar=true" />
+    <property name="jshint.predef" value="Ext,tec_json,alert" />
+
 	<!-- TODO: integrated extjs build -->
 	<!-- import file="${basedir}/web/workspace/tec_json/build.xml"/ -->
 
@@ -42,14 +46,15 @@
         </exec>
     </target>
 	-->
-    <target name="extjs.build.dev" description="build the extjs application in test mode">
+
+	<target name="extjs.build.dev" depends="extjs.lint" description="build the extjs application in test mode">
 		<property name="extjs.build.root" value="${java.io.tmpdir}/webapp/extjs/target/testing/tec_json" />
         <antcall target="extjs.build">
           <param name="target" value="testing"/>
         </antcall>
     </target>
 
-    <target name="extjs.build.prod" description="build the extjs production application">
+    <target name="extjs.build.prod" depends="extjs.lint" description="build the extjs production application">
 		<property name="extjs.build.root" value="${java.io.tmpdir}/webapp/extjs/target/production/tec_json" />
         <antcall target="extjs.build">
           <param name="target" value="production"/>
@@ -61,10 +66,75 @@
 	<target name="extjs.build" unless="already.build">
         <property name="already.build" value="true" />
     	<delete dir="${extjs.build.root}" />
-        <exec spawn="N" dir="${basedir}\web\workspace\tec_json" executable="${sencha.cmd.home}/sencha.exe">
-        	<arg value="app" />
-            <arg value="build" />
-            <arg value="${target}" />
-        </exec>
+
+		<if>
+            <os family="windows"/>
+			<then>
+				<exec executable="${sencha.cmd.home}/sencha.exe"
+					dir="${basedir}\web\workspace\tec_json">
+					<arg value="app" />
+					<arg value="build" />
+					<arg value="${target}" />
+				</exec>
+			</then>
+			<else>
+				<exec executable="${sencha.cmd.home}/sencha"
+					dir="${basedir}\web\workspace\tec_json">
+					<arg value="app" />
+					<arg value="build" />
+					<arg value="${target}" />
+				</exec>
+			</else>
+		</if>
+    </target>
+
+	<!-- jshint validation, ootb jshint doesn't currently work but a custom is working -->
+	<!-- @see http://mattsnider.com/running-jslint-with-your-ant-build/ -->
+    <target name="extjs.lint" depends="ivy.init" description="Validate js files. add -Dextjs.lint.file=[filename] to validate a single file">
+
+    	<pathconvert property="extjs.jshint.classpath">
+            <path refid="classpath.ant" />
+        </pathconvert>
+
+        <mkdir dir="${report.dir}/extjs" />
+
+        <if>
+            <isset property="extjs.lint.file"/>
+            <then>
+                <echo>Validating ${extjs.lint.file}.js</echo>
+                <property name="extjs.lint.include" value="${extjs.lint.file}" />
+            </then>
+            <else>
+                <property name="extjs.lint.include" value="*" />
+            </else>
+        </if>
+
+        <apply executable="java"
+                parallel="true"
+                maxparallel="50"
+        		skipemptyfilesets="true"
+                resultproperty="extjs.lint.result">
+            <arg value="-cp"/>
+            <arg path="${extjs.jshint.classpath}"/>
+            <arg value="org.mozilla.javascript.tools.shell.Main" />
+            <arg path="${jshint.file}" />
+            <arg value="${jshint.flags}" />
+            <arg value="${jshint.predef},=" />
+            <fileset dir="${basedir}/web/workspace/tec_json/app" includes="**/${extjs.lint.include}.js" />
+            <redirector
+                    output="${report.dir}/extjs/err.txt"
+                    createemptyfiles="false"
+                    append="true"
+                    alwayslog="true"/>
+        </apply>
+
+        <if>
+            <resourceexists>
+                <file file="${report.dir}/extjs/err.txt"/>
+            </resourceexists>
+            <then>
+                 <fail message="JS Lint errors see ${report.dir}/extjs/err.txt for details"/>
+            </then>
+        </if>
     </target>
 </project>

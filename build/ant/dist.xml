@@ -85,7 +85,7 @@
 			<!-- see http://www.beilers.com/2010/06/ivy-dependency-management-lessons-learned-and-ant-1-8-mapped-resources/ -->
 			<mappedresources>
 				<restrict>
-					<path refid="runtime.ivy"/>
+					<path refid="classpath.runtime"/>
 					<type type="file"/>
 				</restrict>
 				<chainedmapper>

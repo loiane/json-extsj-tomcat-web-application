@@ -34,24 +34,18 @@
         <fail if="findbugs.warn.fail" message="findbug errors, see ${report.dir}/findbugs/findbugs_report.html"/>
 	</target>
 
-	<!-- TODO build checkstyle config file including lic header -->
+	<!-- http://checkstyle.sourceforge.net/ -->
 	<target name="compile.checkstyle">
 		<mkdir dir="${report.dir}/checkstyle" />
 
-		<path id="classpath.checkstyle">
-			<fileset dir="${checkstyle.home}">
-				<include name="*.jar" />
-			</fileset>
-		</path>
-
-		<taskdef resource="checkstyletask.properties" classpathref="classpath.checkstyle"/>
+		<taskdef resource="checkstyletask.properties" classpathref="classpath.ant"/>
 
 		<checkstyle
             failureProperty="checkstyle.fail"
             failOnViolation="false"
             omitIgnoredModules="true"
 			config="${basedir}/build/checkstyle/checkstyle.xml"
-			classpathref="classpath.checkstyle">
+			classpathref="classpath.ant">
 
 			<fileset dir="${basedir}/java">
 				<include name="**/*.java" />
@@ -60,9 +54,10 @@
 			<formatter type="xml" tofile="${report.dir}/checkstyle/checkstyle_report.xml"/>
 		</checkstyle>
 
+		<!-- the xsl files are not baked into the ivy deps, in source for now -->
         <xslt in="${report.dir}/checkstyle/checkstyle_report.xml"
               out="${report.dir}/checkstyle/checkstyle_report.html"
-              style="${checkstyle.home}/contrib/checkstyle-simple.xsl"/>
+              style="${basedir}/build/checkstyle/checkstyle-simple.xsl"/>
 
         <fail if="checkstyle.fail" message="checkstyle failures, see ${report.dir}/checkstyle/checkstyle_report.html"/>
 	</target>
@@ -76,8 +71,8 @@
 				<include name="*.jar" />
 			</fileset>
 		</path>
-    	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="classpath.pmd"/>
-    	<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="classpath.pmd"/>
+    	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="classpath.ant"/>
+    	<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="classpath.ant"/>
 
     	<!-- TODO: hack till i figure out how this gets set... -->
         <property name="pmd.website.baseurl" value="http://pmd.sourceforge.net/pmd-${pmd.version}"/>
@@ -113,6 +108,7 @@
         <!-- check for errors -->
     	<fail if="pmd.violation.count" message="PMD ${pmd.violation.count} coding violations, see ${report.dir}/pmd/pmd_report.html"/>
 
+    	<!-- need to understand more about this and how to best tune it -->
     	<cpd
     		minimumTokenCount="100"
     		format="xml"
@@ -137,8 +133,8 @@
 			classpathref="classpath.compile"
 			deprecation="true"
 			debug="on"
-			source="1.8"
-			target="1.8"
+			source="${javq.version}"
+			target="${javq.version}"
 			includeAntRuntime="off">
 		</javac>
 	</target>

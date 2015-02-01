@@ -1,20 +1,20 @@
 Ext.define('tec_json.view.TabPanel', {
 	extend : 'Ext.tab.Panel',
 	alias : 'widget.tec-tab-panel',
-	requires : ['tec_json.view.StatusGrid',	'tec_json.view.users.Form' ],
+	requires : [ 'tec_json.view.StatusGrid', 'tec_json.view.users.Form' ],
 	layout : "border",
 	items : [ {
 		id : "tec-status-tab",
 		title : "Status",
 		tooltip : "System status data",
 		xtype : 'tec-status-grid',
-		region: 'north'
+		region : 'north'
 	}, {
 		id : "tec-users-tab",
 		title : "Users",
 		tooltip : "user management",
 		xtype : 'tec-users-form',
-		region: 'north'
+		region : 'north'
 	} ],
 	buttonAlign : "center",
 	buttons : [ {
@@ -30,9 +30,9 @@ Ext.define('tec_json.view.TabPanel', {
 	} ],
 	listeners : {
 		tabchange : function(tabPanel, tab) {
-			if (tab.id == "tec-status-tab") {
+			if (tab.id === "tec-status-tab") {
 				Ext.getStore('Status').reload();
-			} else if (tab.id == "tec-users-tab") {
+			} else if (tab.id === "tec-users-tab") {
 				Ext.getStore('Users').reload();
 			}
 			tab.doLayout();

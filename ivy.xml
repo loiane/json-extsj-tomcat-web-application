@@ -28,7 +28,8 @@
         <conf name="runtime" visibility="public" extends="compile" description="this scope indicates that the dependency is not required for compilation, but is for execution. It is in the runtime and test classpaths, but not the compile classpath."/>
         <conf name="test" visibility="private" extends="runtime" description="this scope indicates that the dependency is not required for normal use of the application, and is only available for the test compilation and execution phases."/>
         <conf name="tomcat" visibility="private" description="config to remove restricted tomcat jars from runtime"/>
-        <conf name="ant" visibility="private" description="config to isolate ant libraries"/>
+        <conf name="ant" visibility="private" description="config to isolate additional ant libraries"/>
+        <conf name="coverage" visibility="private" description="config to isolate coverage libraries. need newer version of asm to run against 1.8 java"/>
         <conf name="endorsed" visibility="private" description="config to isolate java endorsed (xml/xsl/etc...) libraries"/>
     </configurations>
 
@@ -64,9 +65,6 @@
             <exclude module="commons-logging" />
         </dependency>
 
-        <!-- servlet lib not to be deployed to webapp -->
-        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1"  conf="test, tomcat->default"/>
-
         <dependency org="org.hibernate" name="hibernate-core" rev="4.3.8.Final" conf="compile->default">
             <exclude module="xml-apis" />
         </dependency>
@@ -101,28 +99,11 @@
             <exclude module="spring-beans" />
         </dependency>
 
-       <!-- Caching -->
-        <dependency org="org.apache.jcs" name="jcs" rev="1.3" conf="runtime->default">
-            <exclude org="xerces"/>
-            <exclude org="xml-apis"/>
-            <exclude org="xmlrpc"/>
-            <exclude org="commons-logging"/>
-            <exclude org="commons-collections"/>
-            <exclude org="commons-lang"/>
-            <exclude org="log4j"/>
-            <exclude org="mysql"/>
-            <exclude org="berkeleydb"/>
-            <exclude org="velocity"/>
-            <exclude org="hsqldb"/>
-            <exclude org="servletapi"/>
-            <exclude org="tomcat"/>
-            <exclude org="commons-dbcp"/>
-            <exclude org="commons-pool"/>
-            <exclude org="oro"/>
-        </dependency>
-
 		<!-- needed for supression annotation use sparingly... -->
 		<dependency org="com.google.code.findbugs" name="annotations" rev="3.0.0" conf="compile->default"/>
+
+        <!-- servlet lib excluded from webapp deployment -->
+        <dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1"  conf="test, tomcat->default"/>
 
         <!-- runtime -->
         <dependency org="log4j" name="log4j" rev="1.2.17" conf="runtime->default"/>
@@ -143,11 +124,46 @@
 		<!-- this is used to hide BCEL classed baked into zalan -->
         <dependency org="com.googlecode.jarjar" name="jarjar" rev="1.3" conf="ant->default"/>
 		<dependency org="com.google.code.findbugs" name="findbugs" rev="3.0.0" conf="ant->default"/>
+		<!-- needed for jshint extjs.lint -->
+		<dependency org="org.mozilla" name="rhino" rev="1.7R4" conf="ant->default"/>
+		<dependency org="com.google.code.findbugs" name="bcel-findbugs" rev="6.0" conf="ant->default"/>
+        <dependency org="net.sourceforge.pmd" name="pmd" rev="5.1.3" conf="ant->default">
+            <exclude org="org.apache.ant"/>
+            <exclude org="xerces"/>
+            <exclude org="jaxen"/>
+            <exclude org="org.apache.commons"/>
+            <exclude org="org.mozilla"/>
+        </dependency>
+        <dependency org="com.puppycrawl.tools" name="checkstyle" rev="6.2" conf="ant->default">
+            <exclude org="commons-beanutils"/>
+            <exclude org="commons-cli"/>
+            <exclude org="junit"/>
+            <exclude org="org.apache.ant"/>
+            <exclude org="com.google.guava"/>
+        </dependency>
 
         <!-- test -->
         <dependency org="junit" name="junit" rev="4.12" conf="test->default" />
 		<dependency org="org.springframework" name="spring-test" rev="4.1.4.RELEASE" conf="test->default"/>
         <dependency org="simple-jndi" name="simple-jndi" rev="0.11.4.1" conf="test->default"/>
+        <dependency org="org.mockito" name="mockito-all" rev="1.10.8" conf="test->default"/>
+
+		<!-- Code coverage libary -->
+        <dependency org="net.sourceforge.cobertura" name="cobertura" rev="2.0.3" conf="coverage->default">
+            <exclude org="com.sun"/>
+            <exclude org="org.apache.ant"/>
+            <exclude org="org.ow2.asm"/>
+            <exclude org="jaxen"/>
+            <exclude org="org.mortbay.jetty"/>
+            <exclude org="xalan"/>
+            <exclude org="xerces"/>
+        </dependency>
+        <!-- the above version of cobertura no likey java 1.8 classes -->
+        <dependency org="org.ow2.asm" name="asm" rev="5.0.3" conf="coverage->default"/>
+        <dependency org="org.ow2.asm" name="asm-util" rev="5.0.3" conf="coverage->default"/>
+        <dependency org="org.ow2.asm" name="asm-tree" rev="5.0.3" conf="coverage->default"/>
+        <dependency org="org.ow2.asm" name="asm-commons" rev="5.0.3" conf="coverage->default"/>
+        <dependency org="org.ow2.asm" name="asm-analysis" rev="5.0.3" conf="coverage->default"/>
 
         <!-- XML endorsed overrides -->
         <dependency org="xalan" name="xalan" rev="2.7.2" transitive="false" conf="endorsed->default">

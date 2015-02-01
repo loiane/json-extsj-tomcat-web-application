@@ -31,9 +31,9 @@ Ext.define('tec_json.view.LoginForm', {
 				waitTitle : 'Connecting',
 				waitMsg : 'Sending data...',
 				success : function(form, action) {
-					var data = Ext.JSON.decode(action.response.responseText);
+					var wdw, data = Ext.JSON.decode(action.response.responseText);
 					if (data.success) {
-						var wdw = form.owner.up('window');
+						wdw = form.owner.up('window');
 						wdw.close();
 						location.reload();
 					} else {

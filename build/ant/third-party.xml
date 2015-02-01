@@ -18,26 +18,19 @@
         <mkdir dir="${download.dir}" />
     </target>
 
+	<target name="3party.jshint" depends="3party.init" unless="already.3party.jshint">
+		<property name="already.3party.jshint" value="true" />
+
+        <get src="https://raw.githubusercontent.com/jshint/jshint/master/dist/jshint-rhino.js"
+             dest="${download.dir}"
+             verbose="${download.verbose}"/>
+	</target>
+
+	<!-- checkstyle cannot be linked just via ivy as the report xsl are not baked into the deps -->
 	<target name="3party.checkstyle" depends="3party.init" unless="already.3party.checktyle">
 		<property name="already.3party.checktyle" value="true" />
 
         <get src="http://tcpdiag.dl.sourceforge.net/project/checkstyle/checkstyle/${checkstyle.version}/checkstyle-${checkstyle.version}-bin.zip"
-             dest="${download.dir}"
-             verbose="${download.verbose}"/>
-	</target>
-
-    <target name="3party.cobertura" depends="3party.init" unless="already.3party.cobertura">
-		<property name="already.3party.checktyle" value="true" />
-
-        <get src="http://iweb.dl.sourceforge.net/project/cobertura/cobertura/${cobertura.version}/cobertura-${cobertura.version}-bin.zip"
-             dest="${download.dir}"
-             verbose="${download.verbose}"/>
-	</target>
-
-    <target name="3party.findbugs" depends="3party.init" unless="already.3party.findbugs">
-		<property name="already.3party.findbugs" value="true" />
-
-    	<get src="http://hivelocity.dl.sourceforge.net/project/findbugs/findbugs/${findbugs.version}/findbugs-${findbugs.version}.zip?download"
              dest="${download.dir}"
              verbose="${download.verbose}"/>
 	</target>
@@ -50,23 +43,11 @@
              verbose="${download.verbose}"/>
 	</target>
 
-    <target name="3party.pmd" depends="3party.init" unless="already.3party.pmd">
-		<property name="already.3party.pmd" value="true" />
-
-        <get src="http://hivelocity.dl.sourceforge.net/project/pmd/pmd/${pmd.version}/pmd-bin-${pmd.version}.zip"
-             dest="${download.dir}"
-             verbose="${download.verbose}"/>
-	</target>
-
-	<target name="3party.get" depends="3party.checkstyle,3party.cobertura,3party.pmd,3party.tomcat" unless="already.3party.setup"
+	<target name="3party.get" depends="3party.tomcat" unless="already.3party.setup"
 		description="get thirdparty dependencies">
 		<property name="already.3party.setup" value="true" />
 
         <echo>expand the downloaded apps and then update your custom properties file by adding: </echo>
-        <echo>cobertura.home current: ${cobertura.home}</echo>
-        <echo>checkstyle.home current: ${checkstyle.home}</echo>
-        <echo>pmd.home current: ${pmd.home}</echo>
-        <!-- echo>findbugs.home current: ${findbugs.home}</echo -->
         <echo>tomcat.home current: ${tomcat.home}</echo>
 	</target>
 </project>

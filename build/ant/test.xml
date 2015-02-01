@@ -26,22 +26,17 @@
             </filterchain>
 		</copy>
 
-		<path id="classpath.cobertura">
-			<fileset dir="${cobertura.home}">
-				<include name="cobertura*.jar" />
-				<include name="lib/*.jar" />
-			</fileset>
-		</path>
-		<taskdef resource="tasks.properties" classpathref="classpath.cobertura"/>
+    	<taskdef resource="tasks.properties" classpathref="classpath.coverage"/>
     </target>
 
-	<target name="test.compile" depends="test.init, dist.jar">
+	<target name="test.compile" depends="test.init,dist.war">
 		<delete dir="${test.class.root}" quiet="true"/>
 		<mkdir dir="${test.class.root}" />
 
 		<path id="classpath.test.compile">
-			<path refid="classpath.test" />
 			<pathelement path="${build.temp}/classes" />
+			<path refid="classpath.test" />
+			<path refid="classpath.compile" />
 		</path>
 
 		<javac srcdir="${test.src.dir}"
@@ -49,7 +44,8 @@
 			classpathref="classpath.test.compile"
 			deprecation="${show.deprecation}"
 			debug="on"
-			source="1.8" target="1.8"
+			source="${javq.version}"
+			target="${javq.version}"
 			includeAntRuntime="off">
 		</javac>
 
@@ -62,16 +58,61 @@
 
 	</target>
 
-	<target name="test.junit" depends="database.reset,dist.war,test.compile" description="runs unit tests">
-		<mkdir dir="${junit.report.dir}/report" />
-		<mkdir dir="${test.root}/webapps" />
+	<target name="test.instrument" depends="test.init">
+		<mkdir dir="${report.dir}/coverage/html" />
+		<mkdir dir="${test.root}/webapps/${app.name}" />
+
+		<cobertura-instrument
+			ignoreTrivial="true"
+			datafile="${report.dir}/coverage/cobertura.ser">
+
+			<!--
+				The following line causes instrument to ignore any
+				source line containing a reference to log4j, for the
+				purposes of coverage reporting.
+				@see https://github.com/cobertura/cobertura/wiki/Ant-Task-Reference
+			-->
+			<ignore regex="org.apache.log4j.*" />
+
+		    <fileset dir="${build.temp}/classes">
+		        <include name="**/*.class" />
+		        <exclude name="**/*.properties" />
+		    </fileset>
+
+    		<auxClasspath refid="classpath.compile" />
+		</cobertura-instrument>
 
 		<unzip src="${war.file}" dest="${test.root}/webapps/${app.name}"/>
 
+		<jar destfile="${jar.file}">
+			<fileset dir="${build.temp}/classes" />
+		</jar>
+
+		<copy overwrite="true" force="true" file="${jar.file}" todir="${test.root}/webapps/${app.name}/WEB-INF/lib"/>
+
+	</target>
+
+	<target name="test.junit" depends="database.reset,test.compile,test.instrument" description="runs unit tests">
+		<mkdir dir="${junit.report.dir}/report" />
+		<mkdir dir="${test.root}/webapps" />
+
 		<path id="classpath.test.junit">
-			<path refid="classpath.test.compile" />
-			<pathelement path="${test.class.root}" />
+		    <fileset dir="${test.root}/webapps/${app.name}/WEB-INF/lib">
+		        <include name="*.jar" />
+		    </fileset>
+			<pathelement location="${test.root}/webapps/${app.name}/WEB-INF/classes" />
+			<path refid="classpath.test" />
+			<path refid="classpath.coverage" />
+			<pathelement location="${test.class.root}" />
 		</path>
+
+        <pathconvert property="junit.path">
+            <path refid="classpath.test.junit" />
+        </pathconvert>
+
+		<!--
+		<echo>${junit.path}</echo>
+		-->
 
         <junit
 			fork="true"
@@ -91,6 +132,8 @@
             <jvmarg value="-Dorg.osjava.sj.space=java:/comp/env"/>
 			<!-- enforce file encoding for consistent testing -->
             <jvmarg value="-Dfile.encoding=UTF-8"/>
+			<!-- coverage file -->
+        	<jvmarg value="-Dnet.sourceforge.cobertura.datafile=${report.dir}/coverage/cobertura.ser"/>
 			<!-- remote debugging hook -->
 			<jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${test.debug.suspend},address=${test.debug.port}"/>
 
@@ -113,6 +156,8 @@
             </batchtest>
         </junit>
 
+        <sleep seconds="5"/>
+
 		<junitreport todir="${junit.report.dir}/report">
 		  <fileset dir="${junit.report.dir}">
 			<include name="TEST-*.xml"/>
@@ -120,59 +165,13 @@
 		  <report format="frames" todir="${junit.report.dir}/report/html"/>
 		</junitreport>
 
+        <cobertura-report datafile="${report.dir}/coverage/cobertura.ser"
+        	destdir="${report.dir}/coverage/html">
+            <fileset dir="${basedir}/java">
+                <include name="**/*.java" />
+            </fileset>
+        </cobertura-report>
+
     	<fail if="test.junit.fail" message="unit tests failed, see ${junit.report.dir}/report/html/index.html"/>
 	</target>
-
-    	<!-- Called via antCall -->
-    	<!-- param project.name the project name -->
-    	<!-- param test.aux.classpath class path needed to resolve all classes -->
-    	<target name="test.instrument" depends="test.init">
-    		<mkdir dir="${report.root}/coverage/${project.name}/html" />
-
-    		<cobertura-instrument
-    			datafile="${report.root}/coverage/${project.name}/cobertura.ser">
-
-    			<!-- this is causing NPE in base classes ignoreTrivial="true" -->
-    			<!--
-    				The following line causes instrument to ignore any
-    				source line containing a reference to log4j, for the
-    				purposes of coverage reporting.
-    			-->
-    			<ignore regex="org.apache.log4j.*" />
-
-    			<includeClasses regex=".*" />
-
-        		<auxClasspath refid="${test.aux.classpath}" />
-    		</cobertura-instrument>
-
-    	</target>
-
-    	<!-- Called via antCall -->
-    	<!-- param project.name the project name -->
-        <target name="test.report">
-
-    		<junitreport todir="${report.root}/junit/${project.name}/report">
-    		  <fileset dir="${report.root}/junit/${project.name}">
-    			<include name="TEST-*.xml"/>
-    		  </fileset>
-    		  <report format="frames" todir="${report.root}/junit/${project.name}/report/html"/>
-    		</junitreport>
-
-            <cobertura-report datafile="${report.root}/coverage/${project.name}/cobertura.ser" destdir="${report.root}/coverage/${project.name}/html">
-                <fileset dir="${oebase.project.root}/src">
-                    <include name="**/*.java" />
-                </fileset>
-                <!-- TODO should only include classes in test -->
-                <fileset dir="${oeserver.project.root}/src">
-                    <include name="**/*.java" />
-                </fileset>
-                <fileset dir="${oedaemon.project.root}/src">
-                    <include name="**/*.java" />
-                </fileset>
-                <fileset dir="${basedir}/${project.name}/src">
-                    <include name="**/*.java" />
-                </fileset>
-            </cobertura-report>
-        </target>
-
 </project>

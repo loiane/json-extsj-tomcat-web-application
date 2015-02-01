@@ -23,28 +23,16 @@ uses namespace for task init
 
     	<ivy:resolve validate="true"/>
 
-    	<ivy:cachepath pathid="classpath.compile.ivy" conf="compile, tomcat"/>
+    	<ivy:cachepath pathid="classpath.compile" conf="compile, tomcat"/>
 
-		<ivy:cachepath pathid="runtime.ivy" conf="runtime"/>
+		<ivy:cachepath pathid="classpath.runtime" conf="runtime"/>
 
-      	<ivy:cachepath pathid="classpath.ant.ivy" conf="ant"/>
+      	<ivy:cachepath pathid="classpath.ant" conf="ant"/>
 
-      	<ivy:cachepath pathid="classpath.test.ivy" conf="test"/>
+      	<ivy:cachepath pathid="classpath.test" conf="test"/>
 
-    	<!-- build compile classpath -->
-    	<path id="classpath.compile">
-    		<path refid="classpath.compile.ivy"/>
-    	</path>
-
-    	<!-- build ant classpath -->
-    	<path id="classpath.ant">
-    		<path refid="classpath.ant.ivy"/>
-    	</path>
-
-    	<path id="classpath.test">
-    		<path refid="classpath.test.ivy"/>
-    	</path>
-    </target>
+      	<ivy:cachepath pathid="classpath.coverage" conf="coverage"/>
+   </target>
 
     <target name="ivy.clean" depends="common.init" description="clears the ivy cache">
     	<ivy:cleancache />
