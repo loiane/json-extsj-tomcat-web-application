@@ -7,9 +7,11 @@
     <import file="${basedir}/build/ant/doc.xml" />
     <import file="${basedir}/build/ant/extjs.xml" />
     <import file="${basedir}/build/ant/ivy-ant.xml" />
+    <import file="${basedir}/build/ant/compile.xml" />
     <import file="${basedir}/build/ant/database.xml" />
     <import file="${basedir}/build/ant/tomcat.xml" />
     <import file="${basedir}/build/ant/test.xml" />
+    <import file="${basedir}/build/ant/third-party.xml" />
 
     <description>extjs json tomcat web application</description>
 

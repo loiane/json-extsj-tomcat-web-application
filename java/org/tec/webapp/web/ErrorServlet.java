@@ -39,7 +39,7 @@ public class ErrorServlet extends HttpServlet
   private static final long serialVersionUID = 1L;
 
   /** the logger */
-  protected Log mLogger = LogFactory.getLog(this.getClass());
+  protected static final Log LOGGER = LogFactory.getLog(ErrorServlet.class);
 
   /**
    * hand get request
@@ -77,17 +77,17 @@ public class ErrorServlet extends HttpServlet
     Integer statusCode = (Integer) request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
     String requestUri = (String) request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
 
-    mLogger.error("failed to process " + requestUri + " error code: " + statusCode);
+    LOGGER.error("failed to process " + requestUri + " error code: " + statusCode);
 
-    WebException we;
+    WebError we;
     if (throwable != null)
     {
-      mLogger.error("error", throwable);
-      we = new WebException(throwable.getMessage(), ErrorCodes.UNRESOLVEABLE_ERROR);
+      LOGGER.error("error", throwable);
+      we = new WebError(throwable.getMessage(), ErrorCodes.UNRESOLVEABLE_ERROR);
     }
     else
     {
-      we = new WebException("error", ErrorCodes.UNRESOLVEABLE_ERROR);
+      we = new WebError("error", ErrorCodes.UNRESOLVEABLE_ERROR);
     }
 
     PrintWriter pw = null;

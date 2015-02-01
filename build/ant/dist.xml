@@ -8,49 +8,13 @@
 		<fail message="Do not execute this file directly.  Use build.xml from project root" />
 	</target>
 
-	<property name="jar.file.name" value="tec-json-webapp.jar" />
+	<property name="jar.file.name" value="${app.name}.jar" />
 	<property name="jar.file" value="${build.temp}/${jar.file.name}" />
-	<property name="war.file.name" value="tec-json-webapp.war" />
+	<property name="war.file.name" value="${app.name}.war" />
 	<property name="war.file" value="${build.temp}/${war.file.name}" />
 	<property name="war.temp" value="${build.temp}/war.tmp" />
 
-	<!-- TODO: variablize the build type -->
-
-	<target name="dist.checkstyle" depends="ivy.init" unless="already.checkstyle" description="runs checkstyle rules over java code">
-		<property name="already.checkstyle" value="true" />
-<!-- TODO get eclipse and ant in synch
-		<cs:checkstyle config="${basedir}/build/checkstyle/checkstyle.xml">
-
-			<classpath>
-				<path refid="classpath.compile" />
-			</classpath>
-
-			<fileset dir="${basedir}/java">
-				<include name="**/*.java" />
-				<exclude name="**/*Test.java" />
-				<exclude name="**/*TestCase.java" />
-				<exclude name="**/test/**" />
-				<exclude name="**/data/**" />
-			</fileset>
-		</cs:checkstyle>
--->
-	</target>
-
-	<target name="dist.compile" depends="dist.checkstyle" unless="already.compile" description="Compile eEdtions classes">
-		<property name="already.compile" value="true" />
-		<mkdir dir="${build.temp}/classes" />
-
-		<javac srcdir="${basedir}/java"
-			destdir="${build.temp}/classes"
-			classpathref="classpath.compile"
-			deprecation="${show.deprecation}"
-			debug="on"
-			source="1.7" target="1.7"
-			includeAntRuntime="off">
-		</javac>
-	</target>
-
-	<target name="dist.jar" depends="dist.compile" unless="already.jar" description="build eEdtions jar">
+	<target name="dist.jar" depends="compile.javac" unless="already.jar" description="build eEdtions jar">
 		<property name="already.jar" value="true" />
 		<jar destfile="${jar.file}">
 			<manifest>
@@ -70,17 +34,21 @@
 		<mkdir dir="${war.temp}/META-INF" />
 		<mkdir dir="${war.temp}/WEB-INF/conf" />
 
-		<copy file="${basedir}/conf/context.xml.template"
+		<copy file="${basedir}/conf/META-INF/context.xml.template"
               overwrite="true"
               force="true"
-              tofile="${war.temp}/META-INF/context.xml"/>
-
-        <replace file="${war.temp}/META-INF/context.xml" token="$database.datasource$" value="${database.datasource}"/>
-        <replace file="${war.temp}/META-INF/context.xml" token="$database.host$" value="${database.host}"/>
-        <replace file="${war.temp}/META-INF/context.xml" token="$database.port$" value="${database.port}"/>
-        <replace file="${war.temp}/META-INF/context.xml" token="$database.name$" value="${database.name}"/>
-        <replace file="${war.temp}/META-INF/context.xml" token="$database.username$" value="${database.username}"/>
-        <replace file="${war.temp}/META-INF/context.xml" token="$database.password$" value="${database.password}"/>
+              tofile="${war.temp}/META-INF/context.xml">
+            <filterchain>
+                <replacetokens>
+                    <token key="database.datasource" value="${database.datasource}" />
+                    <token key="database.host" value="${database.host}" />
+                    <token key="database.port" value="${database.port}" />
+                    <token key="database.name" value="${database.name}" />
+                    <token key="database.username" value="${database.username}" />
+        			<token key="database.password" value="${database.password}" />
+                </replacetokens>
+            </filterchain>
+		</copy>
 
         <if>
 			<equals arg1="${dba.type}" arg2="hibernate"/>
@@ -90,18 +58,6 @@
                       force="true"
                       toDir="${war.temp}/WEB-INF/conf"/>
 
-        		<copy file="${basedir}/conf/spring/hibernate/hibernate.properties.template"
-                      overwrite="true"
-                      force="true"
-                      tofile="${war.temp}/WEB-INF/conf/hibernate.properties"/>
-
-                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$hibernate.dialect$" value="${hibernate.dialect}"/>
-                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.datasource$" value="${database.datasource}"/>
-                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.url$" value="${database.url}"/>
-                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.test.sql$" value="${database.test.sql}"/>
-                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.driver$" value="${database.driver}"/>
-                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.username$" value="${database.username}"/>
-                <replace file="${war.temp}/WEB-INF/conf/hibernate.properties" token="$database.password$" value="${database.password}"/>
             </then>
             <else>
         		<copy file="${basedir}/conf/spring/jdbc/database-config.xml"
@@ -110,10 +66,9 @@
                       toDir="${war.temp}/WEB-INF/conf"/>
             </else>
         </if>
-
 	</target>
 
-	<target name="dist.war" depends="dist.jar,extjs.build.dev,dist.war.init" unless="already.war" description="build eEdtions jar">
+	<target name="dist.war" depends="dist.jar,extjs.build.dev,dist.war.init" unless="already.war" description="build war">
 		<property name="already.war" value="true" />
 
 		<war destfile="${war.file}" webxml="${basedir}/conf/WEB-INF/web.xml">
@@ -122,12 +77,7 @@
 				<exclude name="WEB-INF/**/*" />
 				<exclude name="META-INF/**/*" />
 			</fileset>
-<!--
-			<fileset dir="${basedir}/web/security">
-				<include name="*.html" />
-				<include name="*.js" />
-			</fileset>
--->
+
 			<lib dir="${build.temp}">
 				<include name="${jar.file.name}" />
 			</lib>
@@ -141,7 +91,6 @@
 				<chainedmapper>
 					<flattenmapper/>
 					<firstmatchmapper>
-						<regexpmapper handledirsep="true" from=".*servlet.*" to="META-INF/servlet-api\.build"/>
 						<globmapper from="*" to="WEB-INF/lib/*"/>
 					</firstmatchmapper>
 				</chainedmapper>

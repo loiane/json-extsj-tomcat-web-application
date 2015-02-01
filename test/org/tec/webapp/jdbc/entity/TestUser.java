@@ -17,23 +17,16 @@ package org.tec.webapp.jdbc.entity;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.tec.BaseTest;
 import org.tec.security.Checksum;
 import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.jdbc.bean.User;
 
-
 /**
  * user entity test
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-    "file:build/test/spring/mock-config.xml",
-    "file:conf/spring/jdbc/database-config.xml"})
-public class TestUser
+public class TestUser extends BaseTest
 {
 
   /** the user data access object */

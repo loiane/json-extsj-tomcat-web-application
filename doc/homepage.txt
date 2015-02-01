@@ -8,7 +8,7 @@ the following third party applications are used:
  * [http://www.sencha.com/products/extjs/ Sencha Extjs (4.2.x)]
  * [http://www.mysql.com/ Mysql 5.5]
 
-the following java third party libraries controlled via [https://ant.apache.org/ivy/ ivy]:
+the following java third party libraries controlled via [https://ant.apache.org/ivy/ ivy] see [https://code.google.com/p/json-extsj-tomcat-web-application/source/browse/trunk/ivy.xml ivy.xml] for complete list:
 
  * [http://docs.oracle.com/javase/7/docs/api/ java API]
  * [http://docs.oracle.com/javaee/7/api/ j2ee servlet API]

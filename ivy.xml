@@ -29,6 +29,7 @@
         <conf name="test" visibility="private" extends="runtime" description="this scope indicates that the dependency is not required for normal use of the application, and is only available for the test compilation and execution phases."/>
         <conf name="tomcat" visibility="private" description="config to remove restricted tomcat jars from runtime"/>
         <conf name="ant" visibility="private" description="config to isolate ant libraries"/>
+        <conf name="endorsed" visibility="private" description="config to isolate java endorsed (xml/xsl/etc...) libraries"/>
     </configurations>
 
     <publications>
@@ -100,6 +101,29 @@
             <exclude module="spring-beans" />
         </dependency>
 
+       <!-- Caching -->
+        <dependency org="org.apache.jcs" name="jcs" rev="1.3" conf="runtime->default">
+            <exclude org="xerces"/>
+            <exclude org="xml-apis"/>
+            <exclude org="xmlrpc"/>
+            <exclude org="commons-logging"/>
+            <exclude org="commons-collections"/>
+            <exclude org="commons-lang"/>
+            <exclude org="log4j"/>
+            <exclude org="mysql"/>
+            <exclude org="berkeleydb"/>
+            <exclude org="velocity"/>
+            <exclude org="hsqldb"/>
+            <exclude org="servletapi"/>
+            <exclude org="tomcat"/>
+            <exclude org="commons-dbcp"/>
+            <exclude org="commons-pool"/>
+            <exclude org="oro"/>
+        </dependency>
+
+		<!-- needed for supression annotation use sparingly... -->
+		<dependency org="com.google.code.findbugs" name="annotations" rev="3.0.0" conf="compile->default"/>
+
         <!-- runtime -->
         <dependency org="log4j" name="log4j" rev="1.2.17" conf="runtime->default"/>
         <!-- dbdeploy needs this as well as the app -->
@@ -116,11 +140,27 @@
             <exclude org="ant"/>
         </dependency>
 		<dependency org="com.dbdeploy" name="dbdeploy-ant" rev="3.0M3" conf="ant->default"/>
+		<!-- this is used to hide BCEL classed baked into zalan -->
+        <dependency org="com.googlecode.jarjar" name="jarjar" rev="1.3" conf="ant->default"/>
+		<dependency org="com.google.code.findbugs" name="findbugs" rev="3.0.0" conf="ant->default"/>
 
         <!-- test -->
         <dependency org="junit" name="junit" rev="4.12" conf="test->default" />
 		<dependency org="org.springframework" name="spring-test" rev="4.1.4.RELEASE" conf="test->default"/>
         <dependency org="simple-jndi" name="simple-jndi" rev="0.11.4.1" conf="test->default"/>
+
+        <!-- XML endorsed overrides -->
+        <dependency org="xalan" name="xalan" rev="2.7.2" transitive="false" conf="endorsed->default">
+            <exclude org="xerces"/>
+        </dependency>
+        <dependency org="xalan" name="serializer" rev="2.7.2" transitive="false" conf="endorsed->default">
+            <exclude org="xml-apis"/>
+        </dependency>
+        <dependency org="xerces" name="xercesImpl" rev="2.11.0" conf="endorsed->default">
+            <exclude org="xml-apis"/>
+        </dependency>
+        <dependency org="xml-resolver" name="xml-resolver" rev="1.2" conf="endorsed->default"/>
+		<dependency org="xml-apis" name="xml-apis" rev="1.4.01" force="true" conf="endorsed->default"/>
 
     </dependencies>
 </ivy-module>

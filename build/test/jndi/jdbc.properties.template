@@ -1,15 +1,16 @@
 ##################################################
 # jndi properties @see https://code.google.com/p/osjava/wiki/SimpleJNDI
 # the prefix of jndi/* comes from the this file name
-# to provide simitry between tomcat and simple you will
+# to provide symmetry between tomcat and simple you will
 # need to set org.osjava.sj.space=java:/comp/env
 # see http://bablingmonkey.blogspot.com/2007/05/today-i-am-working-with-tomcat-trying.html
+# see the test task in build/test.xml
 ##################################################
 ##################################################
 # db connection
 ##################################################
 database/type=javax.sql.DataSource
 database/driver=com.mysql.jdbc.Driver
-database/url=jdbc:mysql://$database.host$:$database.port$/$database.name$
-database/user=$database.username$
-database/password=$database.password$
+database/url=jdbc:mysql://@database.host@:@database.port@/@database.name@
+database/user=@database.username@
+database/password=@database.password@

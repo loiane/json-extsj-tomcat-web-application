@@ -20,8 +20,6 @@
     <!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-classpath-scanning -->
     <context:component-scan base-package="org.tec.webapp.orm"/>
 
-	<context:property-placeholder location="/WEB-INF/conf/hibernate.properties"/>
-
 	<!-- Declare the Hibernate SessionFactory for retrieving Hibernate sessions -->
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate3/annotation/AnnotationSessionFactoryBean.html -->
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/LocalSessionFactoryBuilder.html -->
@@ -38,7 +36,7 @@
 		</property>
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 				<prop key="current_session_context_class">thread</prop>
 				<prop key="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</prop>
 				<prop key="show_sql">true</prop>
@@ -50,17 +48,27 @@
 	<!-- see http://docs.oracle.com/javase/7/docs/api/javax/sql/DataSource.html -->
 	<!-- see https://github.com/brettwooldridge/HikariCP -->
 	<!-- see http://stackoverflow.com/questions/23172643/how-to-set-up-datasource-with-spring-for-hikaricp -->
-    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="shutdown">
+	<!--
+	<context:property-placeholder location="/WEB-INF/conf/hibernate.properties"/>
+	<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="shutdown">
         <property name="dataSourceClassName" value="${database.datasource}" />
-        <!-- property name="connectionTestQuery" value="SELECT 1" / -->
+        <property name="connectionTestQuery" value="SELECT 1" />
 	    <property name="dataSourceProperties">
 	        <props>
-	            <prop key="url">${database.url}</prop>
+	            <prop key="url">jdbc:mysql://${database.host}:${database.port}/${database.name}</prop>
 	            <prop key="user">${database.username}</prop>
 	            <prop key="password">${database.password}</prop>
 	        </props>
 	    </property>
 	</bean>
+	-->
+
+    <!-- JNDI datasource coming from META-INF/ -->
+	<!-- http://stackoverflow.com/questions/9183321/how-to-use-jndi-datasource-provided-by-tomcat-in-spring -->
+	<!-- http://tomcat.apache.org/tomcat-7.0-doc/jndi-resources-howto.html -->
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:/comp/env/jdbc/database"/>
+    </bean>
 
 	<!-- Declare a hibernate transaction manager -->
 	<!-- See http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/orm/hibernate4/HibernateTransactionManager.html -->

@@ -21,10 +21,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -42,6 +42,8 @@ import org.tec.webapp.json.JSONSerializable;
 import org.tec.webapp.bean.RoleType;
 import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.bean.UserRoleBean;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ import java.util.Map;
       @Index(name = "user_idx", unique = true, columnList = "user_name,") },
     uniqueConstraints = {
       @UniqueConstraint(name = "user_name_uc", columnNames = { "user_name" }),
-      @UniqueConstraint(name = "enail_uc", columnNames = { "email" }) })
+      @UniqueConstraint(name = "enail_uc", columnNames = { "email" })})
 public class User implements JSONSerializable, UserBean
 {
   /** the anonymous user name */
@@ -75,39 +77,6 @@ public class User implements JSONSerializable, UserBean
 
   /** the json config to filter out password when sending data to client */
   protected static final JsonConfig JSON_CONFIG = new JsonConfig();
-
-  /**
-   * setup json config to filter password and user from json
-   */
-  static
-  {
-    ANON_USER.setUserName(ANON_USER_NAME);
-    ANON_USER.setUserId(-1);
-
-    JSON_CONFIG.setRootClass(User.class);
-    /** this is to filter the password and cyclic user refernce from user role */
-    JSON_CONFIG.setJsonPropertyFilter(new PropertyFilter()
-    {
-      public boolean apply(Object source, String name, Object value)
-      {
-        boolean filter = (("user".equals(name) || "password".equals(name)) ? true : false);
-        return filter;
-      }
-    });
-
-    /** special processing for generic list */
-    JSON_CONFIG.registerJsonBeanProcessor(UserRole.class, new JsonBeanProcessor()
-    {
-      public JSONObject processBean(Object bean, JsonConfig jsonConfig)
-      {
-        UserRoleBean ur = (UserRoleBean) bean;
-        Map<String, String> m = new HashMap<String, String>();
-        m.put("role", ur.getRole().getName());
-        m.put("userRoleId", Integer.toString(ur.getUserRoleId()));
-        return JSONObject.fromObject(m);
-      }
-    });
-  }
 
   /** serial guid */
   private static final long serialVersionUID = 1L;
@@ -147,6 +116,38 @@ public class User implements JSONSerializable, UserBean
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = UserRole.class)
   @JoinColumn(name = "user_id")
   protected List<UserRoleBean> mUserRoles;
+
+  /**
+   * setup json config to filter password and user from json
+   */
+  static
+  {
+    ANON_USER.setUserName(ANON_USER_NAME);
+    ANON_USER.setUserId(-1);
+
+    JSON_CONFIG.setRootClass(User.class);
+    /** this is to filter the password and cyclic user refernce from user role */
+    JSON_CONFIG.setJsonPropertyFilter(new PropertyFilter()
+    {
+      public boolean apply(Object source, String name, Object value)
+      {
+        return (("user".equals(name) || "password".equals(name)) ? true : false);
+      }
+    });
+
+    /** special processing for generic list */
+    JSON_CONFIG.registerJsonBeanProcessor(UserRole.class, new JsonBeanProcessor()
+    {
+      public JSONObject processBean(Object bean, JsonConfig jsonConfig)
+      {
+        UserRoleBean ur = (UserRoleBean) bean;
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("role", ur.getRole().getName());
+        m.put("userRoleId", Integer.toString(ur.getUserRoleId()));
+        return JSONObject.fromObject(m);
+      }
+    });
+  }
 
   /** {@inheritDoc} */
   @Override()
@@ -265,7 +266,7 @@ public class User implements JSONSerializable, UserBean
    */
   private void writeObject(java.io.ObjectOutputStream out)  throws IOException
   {
-
+      //NOOP
   }
 
   /**
@@ -318,6 +319,9 @@ public class User implements JSONSerializable, UserBean
    * handle collection properties in the top level conversion
    * @param user the user to morph the userRoles
    */
+  @SuppressFBWarnings(
+      justification = "TODO use different json serializer",
+      value = {"BC_IMPOSSIBLE_CAST"})
   protected static void morphUserRoles(UserBean user)
   {
     List<UserRoleBean> roles = new ArrayList<UserRoleBean>();

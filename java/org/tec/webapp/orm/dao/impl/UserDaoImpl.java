@@ -35,8 +35,9 @@ import org.tec.webapp.bean.UserBean;
 @Repository()
 public class UserDaoImpl implements UserDao
 {
+
   /** the logger */
-  protected Log mLogger = LogFactory.getLog(this.getClass());
+  private Log mLogger = LogFactory.getLog(this.getClass());
 
   /** the hibernate session factory */
   @Autowired()
@@ -49,6 +50,12 @@ public class UserDaoImpl implements UserDao
   public void insert(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
+
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("inserting " + user);
+    }
+
     session.persist(user);
   }
 
@@ -59,18 +66,28 @@ public class UserDaoImpl implements UserDao
   public void update(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
+
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("updating " + user);
+    }
+
     session.save(user);
   }
 
   /**
-   * {@inheritDoc}
-   * This function is needed because we need to exclude the password
-   * from the standard user operations.
+   * {@inheritDoc} This function is needed because we need to exclude the
+   * password from the standard user operations.
    */
   @Override()
   public void updatePassword(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
+
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("updating password " + user);
+    }
 
     Query query = session.createQuery("update User set password = :password where user_id = :user_id");
     query.setParameter("password", Checksum.getMD5(user.getPassword()));
@@ -85,6 +102,12 @@ public class UserDaoImpl implements UserDao
   public void delete(UserBean user)
   {
     Session session = mSessionFactory.getCurrentSession();
+
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("deleting " + user);
+    }
+
     session.delete(user);
   }
 
@@ -107,7 +130,14 @@ public class UserDaoImpl implements UserDao
     }
     else
     {
-      return l.get(0);
+      UserBean u = l.get(0);
+
+      if (mLogger.isDebugEnabled())
+      {
+        mLogger.debug("get user " + u);
+      }
+
+      return u;
     }
   }
 
@@ -123,6 +153,6 @@ public class UserDaoImpl implements UserDao
     Query query = session.createQuery("from User where user_name != :user_name");
     query.setParameter("user_name", userName);
 
-    return (List<User>)  query.list();
+    return (List<User>) query.list();
   }
 }

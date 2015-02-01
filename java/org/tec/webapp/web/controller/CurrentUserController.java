@@ -29,7 +29,7 @@ import org.tec.webapp.json.JSONSerializable;
 import org.tec.webapp.json.SerializableMap;
 import org.tec.webapp.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
-import org.tec.webapp.web.WebException;
+import org.tec.webapp.web.WebError;
 import org.tec.webapp.web.model.JSONModelAndView;
 
 /**
@@ -76,7 +76,7 @@ public class CurrentUserController
     }
     catch (Throwable e)
     {
-      jmv.setError(new WebException("failed to get current user", e));
+      jmv.setError(new WebError("failed to get current user", e));
     }
     return jmv;
   }

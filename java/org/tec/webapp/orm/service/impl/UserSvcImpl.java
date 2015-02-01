@@ -37,7 +37,7 @@ import org.tec.webapp.service.UserSvc;
 public class UserSvcImpl implements UserSvc
 {
   /** the logger */
-  protected Log mLogger = LogFactory.getLog(this.getClass());
+  private Log mLogger = LogFactory.getLog(this.getClass());
 
   /** the user data access object */
   @Autowired()
@@ -50,6 +50,11 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void insert(UserBean user)
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("inserting " + user);
+    }
+
     mUserDao.insert(user);
   }
 
@@ -60,6 +65,11 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void update(UserBean user)
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("updating " + user);
+    }
+
     mUserDao.update(user);
   }
 
@@ -70,6 +80,11 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void updatePassword(UserBean user)
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("updating password " + user);
+    }
+
     mUserDao.updatePassword(user);
   }
   /**
@@ -79,6 +94,11 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public void delete(UserBean user)
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("deleting " + user);
+    }
+
     mUserDao.delete(user);
   }
 
@@ -89,6 +109,11 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public UserBean getUser(String userName)
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("getting " + userName);
+    }
+
     return mUserDao.getUser(userName);
   }
 
@@ -99,6 +124,11 @@ public class UserSvcImpl implements UserSvc
   @Transactional()
   public SerializableList<UserBean> getOtherUsers(String userName)
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("getting others " + userName);
+    }
+
     SerializableList<UserBean> userList = new SerializableList<UserBean>();
 
     userList.addAll(mUserDao.getOtherUsers(userName));

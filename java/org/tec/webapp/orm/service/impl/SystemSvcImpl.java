@@ -70,8 +70,15 @@ public class SystemSvcImpl implements SystemSvc
       slist.add(new StatusBean("java.version", System.getProperty("java.version")));
 
       //get Servlet information
-      slist.add(new StatusBean("server.info", "" + mServletContext.getServerInfo()));
-      slist.add(new StatusBean("servlet.version", mServletContext.getMajorVersion() + "." + mServletContext.getMinorVersion()));
+      slist.add(new StatusBean("server.info", mServletContext.getServerInfo()));
+
+      StringBuilder buff = new StringBuilder();
+
+      buff.append(mServletContext.getMajorVersion());
+      buff.append('.');
+      buff.append(mServletContext.getMinorVersion());
+
+      slist.add(new StatusBean("servlet.version", buff.toString()));
 
       // get database information
       conn = mDataSource.getConnection();

@@ -41,18 +41,18 @@ public class SerializableList<E extends JSONSerializable> extends ArrayList<E> i
     {
       StringBuffer buff = new StringBuffer();
 
-      buff.append("[");
+      buff.append('[');
 
       for (JSONSerializable js : this)
       {
         if (buff.length() > 2) //appended more than one list object
         {
-          buff.append(",");
+          buff.append(',');
         }
         buff.append(js.toJSON());
       }
 
-      buff.append("]");
+      buff.append(']');
 
       return buff.toString();
     }

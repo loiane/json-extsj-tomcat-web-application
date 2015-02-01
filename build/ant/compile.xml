@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="compile" default="compile.fail">
+
+    <description>test tasks</description>
+
+	<target name="compile.fail">
+        <fail message="Do not execute this file directly.  Use build.xml from project root" />
+    </target>
+
+	<!-- http://www-01.ibm.com/support/docview.wss?uid=swg21496098 -->
+	<!-- http://findbugs.sourceforge.net/ -->
+	<target name="compile.findbugs">
+		<mkdir dir="${report.dir}/findbugs" />
+
+		<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="classpath.ant"/>
+
+		<findbugs
+			effort="max"
+			failOnError="false"
+            errorProperty="findbugs.err.fail"
+            warningsProperty="findbugs.warn.fail"
+			debug="false"
+			output="html"
+			outputFile="${report.dir}/findbugs/findbugs_report.html" >
+            <classpath refid="classpath.ant"/>
+			<auxClasspath refid="classpath.compile" />
+			<sourcePath path="${basedir}/java" />
+			<class location="${build.temp}/classes" />
+		</findbugs>
+
+        <!-- check for errors -->
+        <fail if="findbugs.err.fail" message="findbug errors, see ${report.dir}/findbugs/findbugs_report.html"/>
+        <fail if="findbugs.warn.fail" message="findbug errors, see ${report.dir}/findbugs/findbugs_report.html"/>
+	</target>
+
+	<!-- TODO build checkstyle config file including lic header -->
+	<target name="compile.checkstyle">
+		<mkdir dir="${report.dir}/checkstyle" />
+
+		<path id="classpath.checkstyle">
+			<fileset dir="${checkstyle.home}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<taskdef resource="checkstyletask.properties" classpathref="classpath.checkstyle"/>
+
+		<checkstyle
+            failureProperty="checkstyle.fail"
+            failOnViolation="false"
+            omitIgnoredModules="true"
+			config="${basedir}/build/checkstyle/checkstyle.xml"
+			classpathref="classpath.checkstyle">
+
+			<fileset dir="${basedir}/java">
+				<include name="**/*.java" />
+			</fileset>
+
+			<formatter type="xml" tofile="${report.dir}/checkstyle/checkstyle_report.xml"/>
+		</checkstyle>
+
+        <xslt in="${report.dir}/checkstyle/checkstyle_report.xml"
+              out="${report.dir}/checkstyle/checkstyle_report.html"
+              style="${checkstyle.home}/contrib/checkstyle-simple.xsl"/>
+
+        <fail if="checkstyle.fail" message="checkstyle failures, see ${report.dir}/checkstyle/checkstyle_report.html"/>
+	</target>
+
+
+    <target name="compile.pmd">
+		<mkdir dir="${report.dir}/pmd" />
+
+		<path id="classpath.pmd">
+			<fileset dir="${pmd.home}/lib">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+    	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="classpath.pmd"/>
+    	<taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="classpath.pmd"/>
+
+    	<!-- TODO: hack till i figure out how this gets set... -->
+        <property name="pmd.website.baseurl" value="http://pmd.sourceforge.net/pmd-${pmd.version}"/>
+
+        <pmd
+        	rulesetfiles="${basedir}/build/pmd/ruleset.xml"
+        	shortFilenames="true"
+        	minimumpriority="2"
+        	failOnRuleViolation="false"
+        	failuresPropertyName="pmd.violation.count">
+            <sourcelanguage name="java" version="1.7"/>
+            <ruleset>ruleset.xml</ruleset>
+            <formatter type="html" toFile="${report.dir}/pmd/pmd_report.html">
+            	<!-- param name="pmd.website.baseurl" value="http://pmd.sourceforge.net/xref/"/ -->
+            </formatter>
+            <formatter type="xml" toFile="${report.dir}/pmd/pmd_report.xml"/>
+            <fileset dir="${basedir}/java">
+                <include name="**/*.java"/>
+            </fileset>
+        </pmd>
+
+    	<!-- TODO: hack till i figure out out to set baseurl -->
+        <if>
+            <isset property="pmd.violation.count"/>
+            <then>
+				<replace dir="${report.dir}/pmd">
+					<include name="pmd_report.html"/>
+					<replacefilter token="$${pmd.website.baseurl}" value="${pmd.website.baseurl}"/>
+				</replace>
+            </then>
+        </if>
+
+        <!-- check for errors -->
+    	<fail if="pmd.violation.count" message="PMD ${pmd.violation.count} coding violations, see ${report.dir}/pmd/pmd_report.html"/>
+
+    	<cpd
+    		minimumTokenCount="100"
+    		format="xml"
+    		ignoreAnnotations="true"
+    		outputFile="${report.dir}/pmd/cpd.xml">
+            <fileset dir="${basedir}/java">
+                <include name="**/*.java"/>
+            </fileset>
+        </cpd>
+
+    	<xslt in="${report.dir}/pmd/cpd.xml"
+			out="${report.dir}/pmd/cpd.html"
+			style="${basedir}/build/pmd/cpdhtml.xslt"/>
+
+    </target>
+
+	<target name="compile.internal.javac">
+		<mkdir dir="${build.temp}/classes" />
+
+		<javac srcdir="${basedir}/java"
+			destdir="${build.temp}/classes"
+			classpathref="classpath.compile"
+			deprecation="true"
+			debug="on"
+			source="1.8"
+			target="1.8"
+			includeAntRuntime="off">
+		</javac>
+	</target>
+
+	<target name="compile.javac" depends="ivy.init,compile.internal.javac,compile.findbugs,compile.checkstyle,compile.pmd">
+	</target>
+</project>

@@ -22,7 +22,7 @@ import org.tec.webapp.json.JSONSerializable;
 /**
  * Web Exception json object
  */
-public class WebException implements JSONSerializable
+public class WebError implements JSONSerializable
 {
 
   /** serial guid */
@@ -32,19 +32,19 @@ public class WebException implements JSONSerializable
   protected String mMessage;
 
   /** the message resource key to use at client */
-  protected String mMessageKey;
+  //protected String mMessageKey;
 
   /** error code for recoverable error handling */
   protected ErrorCodes mCode = ErrorCodes.UNRESOLVEABLE_ERROR;
 
   /** the root error */
-  protected transient Throwable mCause;
+  protected transient Throwable mCause = null;
 
   /**
    * @param message a message describing the error
    * @param cause the cause exception
    */
-  public WebException(String message, Throwable cause)
+  public WebError(String message, Throwable cause)
   {
     mMessage = message;
     mCause = cause;
@@ -54,10 +54,10 @@ public class WebException implements JSONSerializable
    * @param message a message describing the error
    * @param errorCode the error code
    */
-  public WebException(String message, ErrorCodes errorCode)
+  public WebError(String message, ErrorCodes errorCode)
   {
     mMessage = message;
-    errorCode = mCode;
+    mCode = errorCode;
   }
 
   /**
@@ -79,11 +79,12 @@ public class WebException implements JSONSerializable
   /**
    * @return the messageKey
    */
+/*
   public String getMessageKey()
   {
     return mMessageKey;
   }
-
+*/
   /**
    * @return the cause
    */

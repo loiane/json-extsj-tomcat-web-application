@@ -30,13 +30,13 @@ import org.tec.webapp.service.UserSvc;
 public final class ControllerUtils
 {
   /** the session key for the SPRING_SECURITY_CONTEXT */
-  protected static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
+  private static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
 
   /** the session key for the current user */
-  protected static final String CURRENT_USER_KEY = User.class.getName();
+  private static final String CURRENT_USER_KEY = User.class.getName();
 
   /** the logger */
-  protected static final Log LOGGER = LogFactory.getLog(ControllerUtils.class);
+  private static final Log LOGGER = LogFactory.getLog(ControllerUtils.class);
 
   /**
    * hidden ctor

@@ -16,7 +16,9 @@
     <property file="${user.home}/webapp.properties" />
     <property file="${basedir}/build/default.properties" />
 
-    <property name="build.temp" value="${java.io.tmpdir}/webapp" />
+    <!-- property name="build.temp" value="${java.io.tmpdir}/webapp" / -->
+    <property name="app.name" value="tec-json-webapp" />
+    <property name="build.temp" value="${basedir}/dist" />
     <property name="report.dir" value="${basedir}/report" />
 
     <tstamp>

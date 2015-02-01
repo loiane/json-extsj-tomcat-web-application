@@ -30,7 +30,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.tec.webapp.jdbc.entity.support.IdentifierCallback;
 import org.tec.webapp.jdbc.entity.support.ParameterMap;
 
@@ -47,17 +46,6 @@ public abstract class BaseEntity
 
   /** generic id column name */
   protected static final String ID_COLUMN = "id";
-
-  /** resultset row mapper */
-  protected RowMapper mMapper = new RowMapper()
-  {
-    /** {@inheritDoc} */
-    @Override()
-    public Object mapRow(ResultSet rs, int rowNum) throws SQLException
-    {
-      return process(rs);
-    }
-  };
 
   /** resultset extractor */
   protected ResultSetExtractor mExtractor = new ResultSetExtractor()
@@ -111,6 +99,11 @@ public abstract class BaseEntity
    */
   protected int update(PreparedStatementCreator creator) throws DataAccessException
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("updating " + creator);
+    }
+
     return mJdbcTemplate.update(creator);
   }
 
@@ -122,6 +115,11 @@ public abstract class BaseEntity
    */
   protected int delete(PreparedStatementCreator creator) throws DataAccessException
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("deleting " + creator);
+    }
+
     return mJdbcTemplate.update(creator);
   }
 
@@ -134,6 +132,11 @@ public abstract class BaseEntity
    */
   protected Long insert(PreparedStatementCreator creator) throws DataAccessException
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("inserting " + creator);
+    }
+
     return mJdbcTemplate.execute(creator, new IdentifierCallback());
   }
 
@@ -145,6 +148,11 @@ public abstract class BaseEntity
    */
   protected Object query(PreparedStatementCreator creator) throws DataAccessException
   {
+    if (mLogger.isDebugEnabled())
+    {
+      mLogger.debug("getting " + creator);
+    }
+
     return mJdbcTemplate.query(creator, mExtractor);
   }
 }

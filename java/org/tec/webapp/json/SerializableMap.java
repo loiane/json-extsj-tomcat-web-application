@@ -43,18 +43,18 @@ public class SerializableMap<K, V extends JSONSerializable> extends HashMap<Stri
     {
       StringBuffer buff = new StringBuffer();
 
-      buff.append("{");
+      buff.append('{');
 
-      for (String key : this.keySet())
+      for (Entry<String, V> key : this.entrySet())
       {
         if (buff.length() > 2) //appended more than one list object
         {
-          buff.append(",");
+          buff.append(',');
         }
-        buff.append("\"").append(key).append("\" : ").append(this.get(key).toJSON());
+        buff.append('\"').append(key.getKey()).append("\" : ").append(key.getValue().toJSON());
       }
 
-      buff.append("}");
+      buff.append('}');
 
       return buff.toString();
     }

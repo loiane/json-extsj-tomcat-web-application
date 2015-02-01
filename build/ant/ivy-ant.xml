@@ -18,6 +18,9 @@ uses namespace for task init
     <target name="ivy.init" depends="common.init" unless="alrady.ivy.init" description="resolves dependencies into your ivy cache - only needs to be run upon initial checkout or when your ivy.xml changes">
 		<property name="alrady.ivy.init" value="true" />
 
+        <delete dir="${ivy.report.dir}" />
+        <mkdir dir="${ivy.report.dir}" />
+
     	<ivy:resolve validate="true"/>
 
     	<ivy:cachepath pathid="classpath.compile.ivy" conf="compile, tomcat"/>
@@ -48,9 +51,6 @@ uses namespace for task init
     </target>
 
     <target name="ivy.report" depends="ivy.init" description="gens a report on dependencies">
-        <delete dir="${ivy.report.dir}" />
-        <mkdir dir="${ivy.report.dir}" />
-
    		<ivy:report todir="${ivy.report.dir}" />
 
         <ivy:retrieve
@@ -64,6 +64,34 @@ uses namespace for task init
         <ivy:retrieve
         	type="source"
         	pattern="${ivy.report.dir}/src/[conf]/[artifact]-[revision](-[classifier]).[ext]" />
+    </target>
+
+    <target name="ivy.endorsed" depends="ivy.init" unless="already.ivy.endorsed" description="retrieve xml endorsed libraries">
+        <property name="already.ivy.endorsed" value="true" />
+
+    	<ivy:retrieve
+                pattern="${ivy.report.dir}/endorsed/[artifact]-[revision](-[classifier]).[ext]"
+                conf="endorsed"
+                type="jar,bundle"
+                />
+
+    	<!-- this is going to get the latest released version -->
+    	<!-- TODO find a way to get the version defined via ivy.xml -->
+        <ivy:findrevision
+                organisation="xalan"
+                module="xalan"
+                revision="latest.integration"
+                property="ivy.xalan.version"/>
+
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpathref="classpath.ant.ivy"/>
+
+    	<!-- @see https://issues.apache.org/jira/browse/XALANJ-2436 -->
+    	<jarjar jarfile="${ivy.report.dir}/endorsed/xalan-${ivy.xalan.version}-fixed.jar">
+            <zipfileset src="${ivy.report.dir}/endorsed/xalan-${ivy.xalan.version}.jar"/>
+            <rule pattern="org.apache.bcel.**" result="org.apache.xalan.bcel.@1"/>
+        </jarjar>
+
+    	<delete file="${ivy.report.dir}/endorsed/xalan-${ivy.xalan.version}.jar" />
     </target>
 
 </project>

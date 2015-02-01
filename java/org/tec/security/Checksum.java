@@ -15,7 +15,7 @@
  ******************************************************************************/
 package org.tec.security;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -42,11 +42,6 @@ public final class Checksum
    * HMAC-SHA1 encryption algorithm
    */
   public static final String ALGORITHM_HMAC_SHA1 = "HmacSHA1";
-
-  /**
-   * Unicode encoding
-   */
-  public static final String ENCODING_UTF8 = "UTF-8";
 
   /**
    * Used to convert dec int into hex string
@@ -121,10 +116,10 @@ public final class Checksum
   {
     try
     {
-      SecretKeySpec hmac = new SecretKeySpec(key.getBytes(), algorithm);
+      SecretKeySpec hmac = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), algorithm);
       Mac mac = Mac.getInstance(hmac.getAlgorithm());
       mac.init(hmac);
-      return mac.doFinal(data.getBytes());
+      return mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
     }
     catch (InvalidKeyException ike)
     {
@@ -149,15 +144,9 @@ public final class Checksum
     try
     {
       MessageDigest md5 = MessageDigest.getInstance(algorithm);
-      try
-      {
-        byte[] bytes = data.getBytes(ENCODING_UTF8);
-        md5.update(bytes, 0, bytes.length);
-      }
-      catch (UnsupportedEncodingException uee)
-      {
-        throw new RuntimeException(ENCODING_UTF8 + " not supported\n", uee);
-      }
+
+      byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+      md5.update(bytes, 0, bytes.length);
 
       return md5.digest();
     }

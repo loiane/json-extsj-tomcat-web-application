@@ -31,7 +31,7 @@ import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.service.SystemSvc;
 import org.tec.webapp.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
-import org.tec.webapp.web.WebException;
+import org.tec.webapp.web.WebError;
 import org.tec.webapp.web.model.JSONModelAndView;
 import org.tec.webapp.web.model.status.StatusBean;
 
@@ -88,7 +88,7 @@ public class StatusController
     }
     catch (Throwable e)
     {
-      jmv.setError(new WebException("failed to get system status", e));
+      jmv.setError(new WebError("failed to get system status", e));
     }
     return jmv;
   }

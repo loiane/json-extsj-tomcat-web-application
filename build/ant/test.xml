@@ -14,16 +14,28 @@
     <target name="test.init" depends="ivy.init">
 		<mkdir dir="${test.root}/jndi" />
 
-		<copy file="${basedir}/build/test/jndi/jdbc.properties.template" tofile="${test.root}/jndi/jdbc.properties"/>
+		<copy file="${basedir}/build/test/jndi/jdbc.properties.template" tofile="${test.root}/jndi/jdbc.properties">
+            <filterchain>
+                <replacetokens>
+                    <token key="database.host" value="${database.host}" />
+                    <token key="database.port" value="${database.port}" />
+                    <token key="database.name" value="${database.name}" />
+                    <token key="database.username" value="${database.username}" />
+        			<token key="database.password" value="${database.password}" />
+                </replacetokens>
+            </filterchain>
+		</copy>
 
-        <replace file="${test.root}/jndi/jdbc.properties" token="$database.host$" value="${database.host}"/>
-        <replace file="${test.root}/jndi/jdbc.properties" token="$database.port$" value="${database.port}"/>
-        <replace file="${test.root}/jndi/jdbc.properties" token="$database.name$" value="${database.name}"/>
-        <replace file="${test.root}/jndi/jdbc.properties" token="$database.username$" value="${database.username}"/>
-        <replace file="${test.root}/jndi/jdbc.properties" token="$database.password$" value="${database.password}"/>
+		<path id="classpath.cobertura">
+			<fileset dir="${cobertura.home}">
+				<include name="cobertura*.jar" />
+				<include name="lib/*.jar" />
+			</fileset>
+		</path>
+		<taskdef resource="tasks.properties" classpathref="classpath.cobertura"/>
     </target>
 
-	<target name="test.compile" depends="test.init, dist.compile">
+	<target name="test.compile" depends="test.init, dist.jar">
 		<delete dir="${test.class.root}" quiet="true"/>
 		<mkdir dir="${test.class.root}" />
 
@@ -40,10 +52,21 @@
 			source="1.8" target="1.8"
 			includeAntRuntime="off">
 		</javac>
+
+		<!-- log4j fix -->
+		<copy todir="${test.class.root}">
+			<fileset dir="${test.src.dir}">
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+
 	</target>
 
-	<target name="test.junit" depends="database.reset, test.compile" description="runs unit tests">
+	<target name="test.junit" depends="database.reset,dist.war,test.compile" description="runs unit tests">
 		<mkdir dir="${junit.report.dir}/report" />
+		<mkdir dir="${test.root}/webapps" />
+
+		<unzip src="${war.file}" dest="${test.root}/webapps/${app.name}"/>
 
 		<path id="classpath.test.junit">
 			<path refid="classpath.test.compile" />
@@ -71,17 +94,19 @@
 			<!-- remote debugging hook -->
 			<jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,suspend=${test.debug.suspend},address=${test.debug.port}"/>
 
+            <jvmarg value="-Dapp.root=dist/test/webapps/${app.name}"/>
+
 			<!-- capture stdout and send to log file -->
             <formatter type="plain" usefile="true" extension=".log"/>
             <formatter type="xml" usefile="true"/>
 
 			<!-- handle single test class and complete test suite -->
-            <batchtest if="oeserver.test.target" todir="${junit.report.dir}">
+            <batchtest if="test.junit.target" todir="${junit.report.dir}">
                 <fileset dir="${basedir}/test">
-                    <include name="**/${test.target}.java"/>
+                    <include name="**/${test.junit.target}.java"/>
                 </fileset>
             </batchtest>
-            <batchtest unless="test.target" todir="${junit.report.dir}">
+            <batchtest unless="test.junit.target" todir="${junit.report.dir}">
                 <fileset dir="${basedir}/test">
                     <include name="**/Test*.java"/>
                 </fileset>
@@ -97,5 +122,57 @@
 
     	<fail if="test.junit.fail" message="unit tests failed, see ${junit.report.dir}/report/html/index.html"/>
 	</target>
+
+    	<!-- Called via antCall -->
+    	<!-- param project.name the project name -->
+    	<!-- param test.aux.classpath class path needed to resolve all classes -->
+    	<target name="test.instrument" depends="test.init">
+    		<mkdir dir="${report.root}/coverage/${project.name}/html" />
+
+    		<cobertura-instrument
+    			datafile="${report.root}/coverage/${project.name}/cobertura.ser">
+
+    			<!-- this is causing NPE in base classes ignoreTrivial="true" -->
+    			<!--
+    				The following line causes instrument to ignore any
+    				source line containing a reference to log4j, for the
+    				purposes of coverage reporting.
+    			-->
+    			<ignore regex="org.apache.log4j.*" />
+
+    			<includeClasses regex=".*" />
+
+        		<auxClasspath refid="${test.aux.classpath}" />
+    		</cobertura-instrument>
+
+    	</target>
+
+    	<!-- Called via antCall -->
+    	<!-- param project.name the project name -->
+        <target name="test.report">
+
+    		<junitreport todir="${report.root}/junit/${project.name}/report">
+    		  <fileset dir="${report.root}/junit/${project.name}">
+    			<include name="TEST-*.xml"/>
+    		  </fileset>
+    		  <report format="frames" todir="${report.root}/junit/${project.name}/report/html"/>
+    		</junitreport>
+
+            <cobertura-report datafile="${report.root}/coverage/${project.name}/cobertura.ser" destdir="${report.root}/coverage/${project.name}/html">
+                <fileset dir="${oebase.project.root}/src">
+                    <include name="**/*.java" />
+                </fileset>
+                <!-- TODO should only include classes in test -->
+                <fileset dir="${oeserver.project.root}/src">
+                    <include name="**/*.java" />
+                </fileset>
+                <fileset dir="${oedaemon.project.root}/src">
+                    <include name="**/*.java" />
+                </fileset>
+                <fileset dir="${basedir}/${project.name}/src">
+                    <include name="**/*.java" />
+                </fileset>
+            </cobertura-report>
+        </target>
 
 </project>

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.tec.webapp.web.WebException;
+import org.tec.webapp.web.WebError;
 import org.tec.webapp.web.model.JSONModelAndView;
 
 /**
@@ -60,7 +60,7 @@ public class TestResponseController
     }
     catch (Throwable e)
     {
-      jmv.setError(new WebException("failed to set response", e));
+      jmv.setError(new WebError("failed to set response", e));
     }
     return jmv;
   }

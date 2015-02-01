@@ -30,7 +30,7 @@ import org.tec.webapp.json.SerializableMap;
 import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.service.UserSvc;
 import org.tec.webapp.web.ControllerUtils;
-import org.tec.webapp.web.WebException;
+import org.tec.webapp.web.WebError;
 import org.tec.webapp.web.model.JSONModelAndView;
 
 /**
@@ -77,7 +77,7 @@ public class UserAdminController
     }
     catch (Throwable e)
     {
-      jmv.setError(new WebException("failed to get users", e));
+      jmv.setError(new WebError("failed to get users", e));
     }
     return jmv;
   }
