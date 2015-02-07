@@ -29,7 +29,6 @@
 	<target name="tomcat.clean" unless="already.tomcat.clean" description="delete tomcat log files">
 		<property name="already.tomcat.clean" value="true" />
 
-
 		<!-- is brute force file or dir sets don't seem to delete subdirs... -->
         <delete verbose="true" includeemptydirs="true" quiet="true" dir="${tomcat.home}/logs" />
         <mkdir dir="${tomcat.home}/logs" />

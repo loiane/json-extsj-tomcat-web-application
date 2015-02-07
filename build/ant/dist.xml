@@ -14,7 +14,7 @@
 	<property name="war.file" value="${build.temp}/${war.file.name}" />
 	<property name="war.temp" value="${build.temp}/war.tmp" />
 
-	<target name="dist.jar" depends="compile.javac" unless="already.jar" description="build eEdtions jar">
+	<target name="dist.jar" depends="compile.javac" unless="already.jar" description="build jar">
 		<property name="already.jar" value="true" />
 		<jar destfile="${jar.file}">
 			<manifest>
@@ -29,7 +29,7 @@
 		</jar>
 	</target>
 
-	<target name="dist.war.init" unless="already.war" description="build eEdtions jar">
+	<target name="dist.war.init" unless="already.dist.war.init">
 		<property name="already.dist.war.init" value="true" />
 		<mkdir dir="${war.temp}/META-INF" />
 		<mkdir dir="${war.temp}/WEB-INF/conf" />
@@ -111,28 +111,17 @@
 		</war>
 	</target>
 
-	<target name="dist.delete.log" depends="common.init" unless="already.delete" description="delete log files">
-		<property name="already.delete" value="true" />
-		<delete verbose="${delete.verbose}">
-			<fileset dir="${tomcat.home}/logs">
-				<include name="**/*.log" />
-				<include name="**/*.txt" />
-			</fileset>
-		</delete>
-	</target>
-
-	<target name="dist.jar.deploy" depends="dist.jar, dist.delete.log" description="deploy ${jar.file} to webapp">
+	<target name="dist.jar.deploy" depends="dist.jar" description="deploy ${jar.file} to webapp">
 		<copy todir="${tomcat.home}/webapps/tec-json-webapp/WEB-INF/lib" file="${jar.file}" preservelastmodified="true" verbose="copy.verbose" />
 	</target>
 
-	<target name="dist.war.deploy" depends="dist.war, dist.delete.log" description="deploy war to tomcat">
+	<target name="dist.war.deploy" depends="dist.war" description="deploy war to tomcat">
 		<delete dir="${tomcat.home}/webapps/tec-json-webapp"/>
 		<delete file="${tomcat.home}/webapps/${war.file.name}"/>
-		<delete dir="${tomcat.home}/webapps/tec-json-webapp" />
-		<copy todir="${tomcat.home}/webapps" file="${war.file}" preservelastmodified="true" verbose="${copy.verbose}" />
+		<unzip src="${war.file}" dest="${tomcat.home}/webapps/${app.name}"/>
 	</target>
 
-	<target name="dist.extjs.deploy" depends="common.init, extjs.build.dev" description="deploy supporting files to tomcat">
+	<target name="dist.extjs.deploy" depends="common.init, extjs.build.dev" description="deploy extjs files to tomcat">
 		<copy todir="${tomcat.home}/webapps/tec-json-webapp">
 			<fileset dir="${extjs.build.root}">
 				<exclude name="WEB-INF/**/*" />

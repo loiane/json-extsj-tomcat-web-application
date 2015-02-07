@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="tec_json" default=".help">
+    <!-- custom overrides -->
+	<!--
+    <property file="${user.home}/webapp.properties" />
+    <property file="${basedir}/../../../build/default.properties" />
+	-->
+
     <!--
     The build-impl.xml file imported here contains the guts of the build process. It is
     a great idea to read that file to understand how the process works, but it is best to
@@ -27,7 +33,7 @@
 
             <target name="-before-init"/>
             <target name="-after-init"/>
-        
+
         The "page" target performs the call to Sencha Cmd to build the 'all-classes.js' file.
 
             <target name="-before-page"/>
