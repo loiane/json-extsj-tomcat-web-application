@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.tec.webapp.jdbc.service.impl;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.apache.commons.logging.Log;
@@ -22,8 +24,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.tec.webapp.jdbc.entity.UserDba;
+import org.tec.webapp.jdbc.entity.UserRoleDba;
 import org.tec.webapp.json.SerializableList;
 import org.tec.webapp.bean.UserBean;
+import org.tec.webapp.bean.UserRoleBean;
 import org.tec.webapp.service.UserSvc;
 
 /**
@@ -42,6 +46,10 @@ public class UserSvcImpl implements UserSvc
   /** the user data access object */
   @Autowired()
   protected UserDba mUserDba;
+
+  /** the user role data access object */
+  @Autowired()
+  protected UserRoleDba mUserRoleDba;
 
   /**
    * {@inheritDoc}
@@ -114,7 +122,18 @@ public class UserSvcImpl implements UserSvc
       mLogger.debug("getting " + userName);
     }
 
-    return mUserDba.getUser(userName);
+    UserBean ub = mUserDba.getUser(userName);
+
+    List<UserRoleBean> roles = mUserRoleDba.getRoles(ub.getUserId());
+
+    for (UserRoleBean role : roles)
+    {
+      role.setUser(ub);
+    }
+
+    ub.setUserRoles(roles);
+
+    return ub;
   }
 
   /**
@@ -129,9 +148,22 @@ public class UserSvcImpl implements UserSvc
       mLogger.debug("getting others" + userName);
     }
 
+    List<UserBean> users = mUserDba.getOtherUsers(userName);
+    for (UserBean user : users)
+    {
+      List<UserRoleBean> roles = mUserRoleDba.getRoles(user.getUserId());
+
+      for (UserRoleBean role : roles)
+      {
+        role.setUser(user);
+      }
+
+      user.setUserRoles(roles);
+    }
+
     SerializableList<UserBean> userList = new SerializableList<UserBean>();
 
-    userList.addAll(mUserDba.getOtherUsers(userName));
+    userList.addAll(users);
 
     return userList;
   }

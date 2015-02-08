@@ -88,7 +88,7 @@ public class User implements JSONSerializable, UserBean
   @Id()
   @Column(name = "user_id", unique = true, nullable = false)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  protected int mUserId;
+  protected long mUserId;
 
   /** the unique login user name */
   @Column(name = "user_name", length = 32, nullable = false)
@@ -135,7 +135,7 @@ public class User implements JSONSerializable, UserBean
       }
     });
 
-    /** special processing for generic list */
+    /** special processing for generic list from json */
     JSON_CONFIG.registerJsonBeanProcessor(UserRole.class, new JsonBeanProcessor()
     {
       public JSONObject processBean(Object bean, JsonConfig jsonConfig)
@@ -143,7 +143,7 @@ public class User implements JSONSerializable, UserBean
         UserRoleBean ur = (UserRoleBean) bean;
         Map<String, String> m = new HashMap<String, String>();
         m.put("role", ur.getRole().getName());
-        m.put("userRoleId", Integer.toString(ur.getUserRoleId()));
+        m.put("userRoleId", Long.toString(ur.getUserRoleId()));
         return JSONObject.fromObject(m);
       }
     });
@@ -151,14 +151,14 @@ public class User implements JSONSerializable, UserBean
 
   /** {@inheritDoc} */
   @Override()
-  public int getUserId()
+  public long getUserId()
   {
     return mUserId;
   }
 
   /** {@inheritDoc} */
   @Override()
-  public void setUserId(int userId)
+  public void setUserId(long userId)
   {
     mUserId = userId;
   }

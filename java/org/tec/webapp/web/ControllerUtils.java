@@ -67,6 +67,11 @@ public final class ControllerUtils
       session.setAttribute(CURRENT_USER_KEY, u);
     }
 
+    if (LOGGER.isDebugEnabled())
+    {
+      LOGGER.debug("current user " + u);
+    }
+
     return u;
   }
 
@@ -82,6 +87,11 @@ public final class ControllerUtils
     if (u != null)
     {
       session.removeAttribute(CURRENT_USER_KEY);
+    }
+
+    if (LOGGER.isDebugEnabled())
+    {
+      LOGGER.debug("clearing current user " + u);
     }
 
     return u;

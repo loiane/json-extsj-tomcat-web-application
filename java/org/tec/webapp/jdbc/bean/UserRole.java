@@ -31,7 +31,7 @@ public class UserRole implements UserRoleBean
   private static final long serialVersionUID = 1L;
 
   /** the user role surrogate key */
-  protected int mUserRoleId;
+  protected long mUserRoleId;
 
   /** the user object tied to this record */
   protected UserBean mUser;
@@ -41,14 +41,14 @@ public class UserRole implements UserRoleBean
 
   /** {@inheritDoc} */
   @Override()
-  public int getUserRoleId()
+  public long getUserRoleId()
   {
     return mUserRoleId;
   }
 
   /** {@inheritDoc} */
   @Override()
-  public void setUserRoleId(int userRoleId)
+  public void setUserRoleId(long userRoleId)
   {
     mUserRoleId = userRoleId;
   }

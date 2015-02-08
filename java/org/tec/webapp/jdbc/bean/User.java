@@ -15,19 +15,24 @@
  ******************************************************************************/
 package org.tec.webapp.jdbc.bean;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+import net.sf.json.processors.JsonBeanProcessor;
+import net.sf.json.util.PropertyFilter;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.tec.webapp.bean.UserBean;
 import org.tec.webapp.bean.UserRoleBean;
+import org.tec.webapp.orm.entity.UserRole;
 
 /**
- * Document Me!!!
- *
+ * user class for jdbc layer
  */
 public class User implements UserBean
 {
@@ -41,8 +46,11 @@ public class User implements UserBean
   /** the anonymous user */
   public static final UserBean ANON_USER = new User();
 
+  /** the json config to filter out password when sending data to client */
+  protected static final JsonConfig JSON_CONFIG = new JsonConfig();
+
   /** the user surrogate key */
-  protected int mUserId;
+  protected long mUserId;
 
   /** the unique login user name */
   protected String mUserName = ANON_USER_NAME;
@@ -62,16 +70,43 @@ public class User implements UserBean
   /** the list of roles assigned to the user */
   protected List<UserRoleBean> mUserRoles;
 
+  static
+  {
+    JSON_CONFIG.setRootClass(User.class);
+
+    /** this is to filter the password and cyclic user reference from user role */
+    JSON_CONFIG.setJsonPropertyFilter(new PropertyFilter()
+    {
+      public boolean apply(Object source, String name, Object value)
+      {
+        return (("user".equals(name) || "password".equals(name)) ? true : false);
+      }
+    });
+
+    /** special processing for generic list from json */
+    JSON_CONFIG.registerJsonBeanProcessor(UserRole.class, new JsonBeanProcessor()
+    {
+      public JSONObject processBean(Object bean, JsonConfig jsonConfig)
+      {
+        UserRoleBean ur = (UserRoleBean) bean;
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("role", ur.getRole().getName());
+        m.put("userRoleId", Long.toString(ur.getUserRoleId()));
+        return JSONObject.fromObject(m);
+      }
+    });
+  }
+
   /** {@inheritDoc} */
   @Override()
-  public int getUserId()
+  public long getUserId()
   {
     return mUserId;
   }
 
   /** {@inheritDoc} */
   @Override()
-  public void setUserId(int userId)
+  public void setUserId(long userId)
   {
     mUserId = userId;
   }
@@ -205,6 +240,6 @@ public class User implements UserBean
   @Override()
   public String toJSON()
   {
-    return JSONObject.fromObject(this).toString();
+    return JSONObject.fromObject(this, JSON_CONFIG).toString();
   }
 }

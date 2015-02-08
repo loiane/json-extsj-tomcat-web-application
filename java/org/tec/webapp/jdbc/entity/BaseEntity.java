@@ -61,14 +61,7 @@ public abstract class BaseEntity
         l.add(process(rs));
       }
 
-      if (l.size() > 0)
-      {
-        return l;
-      }
-      else
-      {
-        return null;
-      }
+      return l;
     }
   };
 

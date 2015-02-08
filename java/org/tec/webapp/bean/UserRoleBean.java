@@ -26,12 +26,12 @@ public interface UserRoleBean extends JSONSerializable
   /**
    * @return the userRoleId
    */
-  int getUserRoleId();
+  long getUserRoleId();
 
   /**
    * @param userRoleId the userRoleId to set
    */
-  void setUserRoleId(int userRoleId);
+  void setUserRoleId(long userRoleId);
 
   /**
    * @return the user

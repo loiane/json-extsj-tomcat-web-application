@@ -27,12 +27,12 @@ public interface UserBean extends JSONSerializable
   /**
    * @return the userId
    */
-  int getUserId();
+  long getUserId();
 
   /**
    * @param userId the userId to set
    */
-  void setUserId(int userId);
+  void setUserId(long userId);
 
   /**
    * @return the userName

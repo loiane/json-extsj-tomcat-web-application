@@ -53,7 +53,7 @@ public class UserRole implements Serializable, UserRoleBean
   @Id()
   @Column(name = "user_role_id", unique = true, nullable = false)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  protected int mUserRoleId;
+  protected long mUserRoleId;
 
   /** the user object tied to this record */
   @ManyToOne(targetEntity = User.class)
@@ -69,7 +69,7 @@ public class UserRole implements Serializable, UserRoleBean
    * {@inheritDoc}
    */
   @Override()
-  public int getUserRoleId()
+  public long getUserRoleId()
   {
     return mUserRoleId;
   }
@@ -78,7 +78,7 @@ public class UserRole implements Serializable, UserRoleBean
    * {@inheritDoc}
    */
   @Override()
-  public void setUserRoleId(int userRoleId)
+  public void setUserRoleId(long userRoleId)
   {
     mUserRoleId = userRoleId;
   }
