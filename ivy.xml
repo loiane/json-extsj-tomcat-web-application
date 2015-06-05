@@ -135,11 +135,11 @@
             <exclude org="org.mozilla"/>
         </dependency>
         <dependency org="com.puppycrawl.tools" name="checkstyle" rev="6.2" conf="ant->default">
-            <exclude org="commons-beanutils"/>
+            <!-- exclude org="commons-beanutils"/ -->
             <exclude org="commons-cli"/>
             <exclude org="junit"/>
             <exclude org="org.apache.ant"/>
-            <exclude org="com.google.guava"/>
+            <!-- exclude org="com.google.guava"/ -->
         </dependency>
 
         <!-- test -->
