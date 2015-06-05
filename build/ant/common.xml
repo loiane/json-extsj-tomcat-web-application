@@ -37,4 +37,10 @@
         <mkdir dir="${report.dir}" />
     </target>
 
+    <target name="common.props" unless="already.props" depends="common.init" description="init build dependencies">
+        <property name="already.props" value="true" />
+    	<echoproperties destfile="${report.dir}/system.properties"/>
+    </target>
+
+
 </project>

@@ -46,6 +46,7 @@ Ext.define('tec_json.view.users.Grid', {
 		field : {
 			xtype : 'combobox',
 			store : {
+				xtype : 'store',
 				fields : [ 'role', 'display' ],
 				data : [ {
 					role : 'ROLE_ANONYMOUS',
@@ -61,7 +62,11 @@ Ext.define('tec_json.view.users.Grid', {
 			editable : false,
 			multiSelect : true,
 			valueField : 'role',
-			displayField : 'display'
+			displayField : 'display',
+			/* mode : 'local', */
+			typeAhead : false,
+			triggerAction : 'all',
+			lazyRender : true
 		}
 	} ]
 });

@@ -80,6 +80,10 @@
 			<param-value>sessionFactory</param-value>
 		</init-param>
 	</filter>
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<!-- Handles all requests into the application -->
 	<!-- See http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mvc.html#mvc-servlet -->

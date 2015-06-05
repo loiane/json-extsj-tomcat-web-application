@@ -6,7 +6,7 @@ the following third party applications are used:
  * [http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html JDK 8]
  * [http://tomcat.apache.org/ Apache Tomcat (7)]
  * [http://www.sencha.com/products/extjs/ Sencha Extjs (4.2.x)]
- * [http://www.mysql.com/ Mysql 5.5]
+ * [http://www.mysql.com/ Mysql 5.x]
 
 the following java third party libraries controlled via [https://ant.apache.org/ivy/ ivy] see [https://code.google.com/p/json-extsj-tomcat-web-application/source/browse/trunk/ivy.xml ivy.xml] for complete list:
 
@@ -35,12 +35,11 @@ The following are build and infrastructure tools used for this project:
  * [http://checkstyle.sourceforge.net/ Checkstyle]
  * [http://pmd.sourceforge.net/ PMD/CPD]
  * [http://cobertura.github.io/cobertura/ Cobertura (code coverage)]
- * [http://jshint.com/ jsHint (modded)]
+ * [http://jshint.com/ jsHint]
  * [http://www.sencha.com/products/sencha-cmd/download Sench CMD build tool (4.x)]
  * [http://rubyinstaller.org/downloads/ ruby windows installer (pre 3.0)]
 
 TODO:
  * get user manger tab working to display all data (roles are not loading) and persist changes
- * have both Hibernate and Spring JDBC DBO layer (jdbc to use programmatic transactions)
  * abstract extjs source code location to eliminate need for static check in.
  * add [http://jenkins-ci.org/ jenkins] setup for CI

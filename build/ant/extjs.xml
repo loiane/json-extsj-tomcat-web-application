@@ -11,8 +11,9 @@
 	<property name="extjs.workspace.dir" value="${basedir}/web/workspace/tec_json" />
 
 	<property name="jshint.file" value="${basedir}/build/jshint/jshint-rhino.js" />
-	<property name="jshint.flags" value="browser=true,maxerr=25,undef=true,curly=false,laxbreak=true,debug=true,eqeqeq=true,immed=true,onevar=true" />
-	<property name="jshint.predef" value="Ext,tec_json,alert" />
+    <!-- See http://jshint.com/docs/options/ http://jslinterrors.com/ -->
+    <property name="jshint.flags" value="enforceall=true,nocomma=false,browser=true,devel=true,debug=true" />
+	<property name="jshint.predef" value="Ext,tec_json" />
 
 
 	<!-- this is only to generate the base workspace. -->
